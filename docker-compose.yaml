@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  icarus-detector:
+    image: prominendt/icarus-detector-dev:latest
+    container_name: icarus-detector
+    entrypoint: 
+      - "python"
+      - "-m"
+      - "scripts.tensorrt.build_tensorrt_engine"
+      - "--onnx=assets/yolov4.onnx"
