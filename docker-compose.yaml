@@ -9,6 +9,9 @@ services:
     runtime: nvidia
     privileged: true
     entrypoint: 
+      - "/bin/bash"
+      - "/home/docker_user/scripts/build_tensorrt.sh"
+      - "&&"
       - "python3"
       - "-m"
       - "src.detector.entrypoints.gstreamer_app"

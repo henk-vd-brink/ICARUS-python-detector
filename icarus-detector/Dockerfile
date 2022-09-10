@@ -1,6 +1,7 @@
-FROM prominendt/icarus:arm64v8-cuda102a53-py3.7-opencv4.4.0
+FROM test
+ENV CPLUS_INCLUDE_PATH="${CPLUS_INCLUDE_PATH}:/usr/include/python3.6m/"
 
-ENV HOME=/home/docker_user
+WORKDIR ${HOME}
 
 RUN apt-get update \
     && apt-get install -y \
@@ -10,16 +11,20 @@ RUN apt-get update \
         libxslt1-dev \
         python3-dev
 
+RUN pip install --upgrade pip
+RUN pip install pycuda
+
 RUN useradd -m docker_user \
 	&& usermod -a -G video docker_user
 
-USER docker_user
+COPY requirements.txt ${HOME}/requirements.txt
+RUN pip install -r ${HOME}/requirements.txt
 
-WORKDIR ${HOME}
-
-
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+COPY assets ${HOME}/assets
+COPY scripts ${HOME}/scripts
+RUN chmod +x ${HOME}/scripts/*.sh
 
 COPY src ${HOME}/src
+
+
 

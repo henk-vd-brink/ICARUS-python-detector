@@ -3,6 +3,11 @@ get_yolov4_weights:
 	https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights \
 	-P ./icarus-detector/assets
 
+get_yolov4_onnx:
+	wget \
+	https://github.com/onnx/models/raw/main/vision/object_detection_segmentation/yolov4/model/yolov4.onnx \
+	-P ./icarus-detector/assets
+
 convert_darknet_to_onnx:
 	python3 -m scripts.python.darknet_to_onnx \
 	--cfg_file /home/prominendt/repos/ICARUS-python-detector/icarus-detector/assets/yolov4-tiny.cfg \

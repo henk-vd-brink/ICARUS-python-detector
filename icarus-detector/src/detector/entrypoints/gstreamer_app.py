@@ -32,7 +32,7 @@ bootstrap_dict = bootstrap.bootstrap()
 bus = bootstrap_dict.get("bus")
 
 def main():
-    with VideoCapture(*INPUT_CAPS) as vc:
+    with VideoCapture(0) as vc:
         while True:
             ret, image = vc.read()
 

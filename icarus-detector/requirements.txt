@@ -1,4 +1,5 @@
 python-dotenv
 schema
 aiohttp
-onnx
+numpy
+pillow
