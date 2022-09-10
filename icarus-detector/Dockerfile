@@ -1,9 +1,6 @@
-FROM nvcr.io/nvidia/l4t-tensorrt:r8.2.1-runtime
+FROM prominendt/icarus:arm64v8-cuda102a53-py3.7-opencv4.4.0
 
-ENV HOME=/usr/docker_user
-ENV CPLUS_INCLUDE_PATH="${CPLUS_INCLUDE_PATH}:/usr/include/python3.6m/"
-
-WORKDIR ${HOME}
+ENV HOME=/home/docker_user
 
 RUN apt-get update \
     && apt-get install -y \
@@ -13,16 +10,15 @@ RUN apt-get update \
         libxslt1-dev \
         python3-dev
 
-RUN pip install --upgrade pip
+RUN useradd -m docker_user \
+	&& usermod -a -G video docker_user
 
-COPY requirements.txt ${HOME}
+USER docker_user
 
-COPY scripts ${HOME}/scripts
+WORKDIR ${HOME}
 
-COPY assets ${HOME}/assets
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
-# ENTRYPOINT ["python", "-m", "scripts.tensorrt.build_tensorrt_engine", "--onnx=assets/yolov4.onnx"]
+COPY src ${HOME}/src
 
-# COPY requirements.txt ${HOME}
-
-# RUN pip3 install -r requirements.txt

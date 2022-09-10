@@ -5,4 +5,4 @@ services:
     build:
       context: icarus-detector
       dockerfile: Dockerfile
-    image: prominendt/icarus-detector-dev:latest
+    image: prominendt/icarus-dev:arm-demo-detector

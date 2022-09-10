@@ -1,11 +1,14 @@
-version: "3"
+version: "3.8"
 
 services:
   icarus-detector:
-    image: prominendt/icarus-detector-dev:latest
+    image: prominendt/icarus-dev:arm-demo-detector
     container_name: icarus-detector
+    devices:
+      - /dev/video0:/dev/video0
+    runtime: nvidia
+    privileged: true
     entrypoint: 
-      - "python"
+      - "python3"
       - "-m"
-      - "scripts.tensorrt.build_tensorrt_engine"
-      - "--onnx=assets/yolov4.onnx"
+      - "src.detector.entrypoints.gstreamer_app"
