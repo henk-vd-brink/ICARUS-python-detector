@@ -17,6 +17,7 @@ USER docker_user
 
 WORKDIR ${HOME}
 
+
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
