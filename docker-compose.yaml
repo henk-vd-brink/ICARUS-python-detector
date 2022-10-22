@@ -9,7 +9,8 @@ services:
     runtime: nvidia
     privileged: true
     volumes:
-      - icarus-edge-detector/src:/home/docker_user:/src
+      - icarus-edge-detector/src:/home/docker_user/src
+      - icarus-edge-detector/assets:/home/docker_user/assets
     # entrypoint: 
     #   - "python3"
     #   - "-m"

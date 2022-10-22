@@ -1,0 +1,23 @@
+FROM nvcr.io/nvidia/l4t-tensorflow:r32.7.1-tf2.7-py3
+
+ENV HOME=/home/docker_user
+
+COPY scripts/install_dependencies.sh /opt/dependencies/install_dependencies.sh
+
+RUN chmod +x /opt/dependencies/*.sh \
+    && /opt/dependencies/install_dependencies.sh
+
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1 \
+    	&& update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2 \
+	&& curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+	&& python3 get-pip.py
+
+RUN pip install numpy==1.19.4
+
+RUN ln -s /usr/include/aarch64-linux-gnu/cudnn_version_v8.h /usr/include/aarch64-linux-gnu/cudnn_version.h
+
+COPY --from=cricarusprod001.azurecr.io/icarus-edge-l4t-base:r32.7.1 /opt /opt
+
+WORKDIR /opt/opencv/build
+
+RUN make install

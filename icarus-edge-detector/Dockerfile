@@ -1,7 +1,6 @@
-FROM cricarusprod001.azurecr.io/icarus-edge-baseimage
+FROM cricarusprod001.azurecr.io/icarus-edge-l4t-pytorch:r32.7.1-pth1.9-py3
 
 WORKDIR ${HOME}
-
 
 RUN useradd -m docker_user \
 	&& usermod -a -G video docker_user

@@ -18,4 +18,4 @@ build_and_run:
 	./scripts/build_and_run.sh
 
 debug:
-	docker run -it -v /home/jetson/repos/ICARUS-python-detector/icarus-edge-detector/src/:/home/docker_user/src cricarusprod001.azurecr.io/icarus-edge-detector bash
+	docker run -it --privileged -v /home/jetson/repos/ICARUS-python-detector/icarus-edge-detector/src/:/home/docker_user/src -v /home/jetson/repos/ICARUS-python-detector/icarus-edge-detector/assets/:/home/docker_user/assets --network host cricarusprod001.azurecr.io/icarus-edge-detector bash

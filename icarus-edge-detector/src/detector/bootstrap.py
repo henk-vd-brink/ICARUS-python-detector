@@ -3,7 +3,7 @@ import queue
 import logging
 
 from . import config
-from .adapters import senders
+from .adapters import senders, video_capture as vc, savers, mq_clients
 from .service_layer import handlers, processor
 from .domain import services as domain_services
 
@@ -18,7 +18,7 @@ def inject_dependencies(function, dependencies):
         name: dependency for name, dependency in dependencies.items() if name in params
     }
     
-    return lambda message: function(message, **deps)
+    return lambda input_params: function(input_params, **deps)
 
 def inject_dependencies_into_handlers(handler_module, dependencies):
     functions = inspect.getmembers(handler_module, inspect.isfunction)
@@ -30,10 +30,15 @@ def inject_dependencies_into_handlers(handler_module, dependencies):
 
 def bootstrap(
     sender = senders.HttpSender(config={}),
-    preprocessor = domain_services.preprocessors.FakePreprocessor(),
-    detector = domain_services.detectors.FakeDetector(),
-    postprocessor = domain_services.postprocessors.FakePostprocessor()
+    preprocessor = domain_services.preprocessors.YoloV5Preprocessor(),
+    detector = domain_services.detectors.YoloV5Detector(),
+    postprocessor = domain_services.postprocessors.YoloV5Postprocessor(),
+    video_capture = vc.VideoCapture,
+    file_saver = savers.FileSystemSaver(),
+    mq_client = mq_clients.RedisClient()
 ):   
+
+    mq_client.connect()
 
     logger.info(
         "Initialised APP \n --- \n"
@@ -47,12 +52,14 @@ def bootstrap(
         "preprocessor": preprocessor,
         "postprocessor": postprocessor,
         "detector": detector,
-        "sender": sender
+        "sender": sender,
+        "file_saver": file_saver,
+        "mq_client": mq_client
     }
 
     inject_dependencies_into_handlers(handlers, dependencies)
 
-    return processor.Processor(handlers=handlers)
+    return processor.Processor(handlers=handlers), video_capture
     
 
 
