@@ -16,3 +16,6 @@ convert_darknet_to_onnx:
 
 build_and_run:
 	./scripts/build_and_run.sh
+
+debug:
+	docker run -it -v /home/jetson/repos/ICARUS-python-detector/icarus-edge-detector/src/:/home/docker_user/src cricarusprod001.azurecr.io/icarus-edge-detector bash

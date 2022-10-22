@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  # icarus-base-image:
+  #   build:
+  #     context: docker
+  #     dockerfile: Dockerfile.base
+  #   image: cricarusprod001.azurecr.io/icarus-edge-baseimage
+
+  icarus-edge-detector:
+    build:
+      context: icarus-edge-detector
+      dockerfile: Dockerfile
+    image: cricarusprod001.azurecr.io/icarus-edge-detector

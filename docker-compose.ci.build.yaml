@@ -1,8 +1,0 @@
-version: "3.8"
-
-services:
-  icarus-detector:
-    build:
-      context: icarus-detector
-      dockerfile: Dockerfile
-    image: prominendt/icarus-dev:arm-demo-detector

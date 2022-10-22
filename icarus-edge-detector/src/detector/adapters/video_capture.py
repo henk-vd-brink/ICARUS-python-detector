@@ -1,7 +1,7 @@
 import cv2
 
 class VideoCapture(cv2.VideoCapture):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         super(VideoCapture, self).__init__(*args, **kwargs)      
 
     def __enter__(self, *args, **kwargs):

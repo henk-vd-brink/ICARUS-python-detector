@@ -2,16 +2,15 @@ version: "3.8"
 
 services:
   icarus-detector:
-    image: prominendt/icarus-dev:arm-demo-detector
+    image: cricarusprod001.azurecr.io/icarus-edge-detector
     container_name: icarus-detector
     devices:
       - /dev/video0:/dev/video0
     runtime: nvidia
     privileged: true
-    entrypoint: 
-      - "/bin/bash"
-      - "/home/docker_user/scripts/build_tensorrt.sh"
-      - "&&"
-      - "python3"
-      - "-m"
-      - "src.detector.entrypoints.gstreamer_app"
+    volumes:
+      - icarus-edge-detector/src:/home/docker_user:/src
+    # entrypoint: 
+    #   - "python3"
+    #   - "-m"
+    #   - "src.detector.entrypoints.gstreamer_app"
