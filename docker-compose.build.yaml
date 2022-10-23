@@ -7,17 +7,17 @@ services:
       dockerfile: Dockerfile.l4t-base:r32.7.1
     image: cricarusprod001.azurecr.io/icarus-edge-l4t-base:r32.7.1
 
-  # icarus-tensorflow-image:
-  #   build:
-  #     context: docker
-  #     dockerfile: Dockerfile.l4t-pytorch:r32.7.1-pth1.9-py3
-  #   image: cricarusprod001.azurecr.io/icarus-edge-l4t-tensorflow:r32.7.1-tf2.7-py3
+  icarus-tensorflow-image:
+    build:
+      context: docker
+      dockerfile: Dockerfile.l4t-pytorch:r32.7.1-pth1.9-py3
+    image: cricarusprod001.azurecr.io/icarus-edge-l4t-tensorflow:r32.7.1-tf2.7-py3
 
-  # icarus-pytorch-image:
-  #   build:
-  #     context: docker
-  #     dockerfile: Dockerfile.l4t-tensorflow:r32.7.1-tf2.7-py3
-  #   image: cricarusprod001.azurecr.io/icarus-edge-l4t-pytorch:r32.7.1-pth1.9-py3
+  icarus-pytorch-image:
+    build:
+      context: docker
+      dockerfile: Dockerfile.l4t-tensorflow:r32.7.1-tf2.7-py3
+    image: cricarusprod001.azurecr.io/icarus-edge-l4t-pytorch:r32.7.1-pth1.9-py3
 
   # icarus-edge-detector:
   #   build:
