@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=cricarusprod001.azurecr.io/icarus-edge-l4t-base:r32.7.1
+ARG BASE_IMAGE=cricarusprod001.azurecr.io/icarus-edge-l4t-pytorch:r32.7.1-pth1.9-py3
 
 FROM ${BASE_IMAGE}
 

@@ -11,6 +11,7 @@ apt-get update \
         python3.7-dev \
         python3-distutils \
         python3-setuptools \
+        python3-numpy \
         libatlas-base-dev \
         libavcodec-dev \
         libavformat-dev \

@@ -3,7 +3,7 @@ import redis
 import json
 
 
-class AbstractMqClient(abc.Abc):
+class AbstractMqClient(abc.ABC):
 
     def connect(self):
         self._connect()
