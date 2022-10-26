@@ -30,10 +30,10 @@ def inject_dependencies_into_handlers(handler_module, dependencies):
 
 def bootstrap(
     sender = senders.HttpSender(config={}),
-    preprocessor = domain_services.preprocessors.YoloV5Preprocessor(),
-    detector = domain_services.detectors.YoloV5Detector(),
-    postprocessor = domain_services.postprocessors.YoloV5Postprocessor(),
-    video_capture = vc.VideoCapture,
+    preprocessor = domain_services.preprocessors.MobileNetV3Preprocessor(),
+    detector = domain_services.detectors.MobileNetV3Detector(),
+    postprocessor = domain_services.postprocessors.MobileNetV3Postprocessor(),
+    video_capture = vc.VideoCapture(),
     file_saver = savers.FileSystemSaver(),
     mq_client = mq_clients.RedisClient()
 ):   

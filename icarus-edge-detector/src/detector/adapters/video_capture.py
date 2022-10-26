@@ -1,14 +1,16 @@
 import cv2
 
-class VideoCapture(cv2.VideoCapture):
-    def __init__(self, *args, **kwargs):
-        super(VideoCapture, self).__init__(*args, **kwargs)
+class VideoCapture():
+    def __init__(self, config={}):
+        self._config = config
 
-    def __enter__(self, *args, **kwargs):
-        return self
+    def __enter__(self):
+        self._cap = cv2.VideoCapture(0)
+        self._cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        return self._cap
     
     def __exit__(self, *args, **kwargs):
-        self.release()
+        self._cap.release()
 
 
 class FakeVideoCapture:

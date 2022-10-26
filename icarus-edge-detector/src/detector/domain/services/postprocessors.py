@@ -25,10 +25,10 @@ class FakePostprocessor(AbstractPostprocessor):
         return "< FakePostprocessor >"
 
 
-class YoloV5Postprocessor(AbstractPostprocessor):
+class MobileNetV3Postprocessor(AbstractPostprocessor):
 
     def _postprocess(self, data):
         return data
 
     def __repr__(self):
-        return "< YoloV5Postprocessor >"
+        return "< MobileNetV3Postprocessor >"

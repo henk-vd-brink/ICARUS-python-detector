@@ -41,7 +41,7 @@ class FakeDetector(AbstractDetector):
         return "< FakeDetector >"
 
 
-class YoloV5Detector(AbstractDetector):
+class MobileNetV3Detector(AbstractDetector):
 
     def __init__(self):
         self._device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -112,4 +112,4 @@ class YoloV5Detector(AbstractDetector):
 
 
     def __repr__(self):
-        return "< YoloV5Detector >"
+        return "< MobileNetV3Detector >"

@@ -30,7 +30,7 @@ class FakePreprocessor(AbstractPreprocessor):
         return "< FakePreprocessor >"
 
 
-class YoloV5Preprocessor(AbstractPreprocessor):
+class MobileNetV3Preprocessor(AbstractPreprocessor):
     def __init__(self, config={}):
         super().__init__(config)
 
@@ -41,8 +41,9 @@ class YoloV5Preprocessor(AbstractPreprocessor):
         self._desired_image_height = config.get("desired_image_height", 1080)
 
     def _preprocess(self, data):
-        data.image = data.raw_image
+        new_image_resolution = (self._desired_image_width, self._desired_image_height)
+        data.image = cv2.resize(data.raw_image,  new_image_resolution, interpolation = cv2.INTER_AREA)
         return data
 
     def __repr__(self):
-        return "< YoloV5Preprocessor >"
+        return "< MobileNetV3Preprocessor >"

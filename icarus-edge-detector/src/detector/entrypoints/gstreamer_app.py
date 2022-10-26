@@ -13,16 +13,14 @@ processor, video_capture = bootstrap.bootstrap()
 
 def main():
     
-    with video_capture(0) as vc:
+    with video_capture as vc:
         while True:
             ret, image = vc.read()
 
             if not ret:
                 pass
-        
+                
             processor.handle_image(image)
-            time.sleep(5)    
-            print("sleeping")
         
 
 
