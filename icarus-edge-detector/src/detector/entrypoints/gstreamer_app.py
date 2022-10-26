@@ -19,11 +19,10 @@ def main():
 
             if not ret:
                 pass
-
-            time.sleep(1)
-            print(image.shape)
-            
+        
             processor.handle_image(image)
+            time.sleep(5)    
+            print("sleeping")
         
 
 

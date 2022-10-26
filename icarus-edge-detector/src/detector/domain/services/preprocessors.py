@@ -37,8 +37,8 @@ class YoloV5Preprocessor(AbstractPreprocessor):
         self._parse_config(config)
         
     def _parse_config(self, config):
-        self._desired_image_width = config.get("desired_image_width", 416)
-        self._desired_image_height = config.get("desired_image_height", 416)
+        self._desired_image_width = config.get("desired_image_width", 1920)
+        self._desired_image_height = config.get("desired_image_height", 1080)
 
     def _preprocess(self, data):
         data.image = data.raw_image
