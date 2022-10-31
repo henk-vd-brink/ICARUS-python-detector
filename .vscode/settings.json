@@ -1,0 +1,80 @@
+{
+    // General
+    "files.exclude": {
+        "**/.pytest_cache": true,
+        "**/.mypy_cache": true,
+        "**/__pycache__": true,
+        "**/.testmondata": true
+    },
+    // Testing
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "icarus-webserver/tests"
+    ],
+    "coverage-gutters.showLineCoverage": true,
+    "coverage-gutters.showRulerCoverage": true,
+    // linting
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true,
+    "python.linting.flake8Args": [
+        "--config=./.vscode/.flake8"
+    ],
+    // Formatter
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black",
+    // Plugins
+    "autoDocstring.includeExtendedSummary": true,
+    "todo-tree.general.tags": [
+        "BUG",
+        "TODO",
+    ],
+    "better-comments.tags": [
+        {
+            "tag": "!",
+            "color": "#FF2D00",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "?",
+            "color": "#3498DB",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "//",
+            "color": "#474747",
+            "strikethrough": true,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "todo",
+            "color": "#FF8C00",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "/",
+            "color": "#98C379",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        }
+    ],
+    "restructuredtext.experimental": true,
+}

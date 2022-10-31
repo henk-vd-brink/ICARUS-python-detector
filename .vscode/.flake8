@@ -1,0 +1,17 @@
+[flake8]
+max-line-length = 88
+extend-ignore = E203
+max-complexity = 10
+ignore = D100
+exclude =
+    .git,
+    .venv,
+    __pycache__,
+    docs/source/conf.py,
+    old,
+    build,
+    dist,
+    __init__.py,
+    .mypy_cache,
+    *migrations*
+docstring-convention=google

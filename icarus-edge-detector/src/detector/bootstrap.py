@@ -35,7 +35,7 @@ def bootstrap(
     postprocessor = domain_services.postprocessors.MobileNetV3Postprocessor(),
     video_capture = vc.VideoCapture(),
     file_saver = savers.FileSystemSaver(),
-    mq_client = mq_clients.RedisClient()
+    mq_client = mq_clients.RabbitMqClient()
 ):   
 
     mq_client.connect()

@@ -89,16 +89,12 @@ class MobileNetV3Detector(AbstractDetector):
         labels = outputs[0]['labels'][:len(boxes)]
 
         pred_classes = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in labels.cpu().numpy()]
-        
-        image = self._draw_boxes_and_labels(boxes, pred_classes, labels, data.image)
 
-        cv2.imwrite("/home/docker_user/assets/test.png", image)
-
-        print(self._get_inference_results(boxes, pred_classes))
+        data.inference_results = self._build_inference_results(boxes, pred_classes)
 
         return data
 
-    def _get_inference_results(self, boxes, pred_classes):
+    def _build_inference_results(self, boxes, pred_classes):
         inference_results = []
         for i, box in enumerate(boxes):
             inference_result = {
@@ -107,9 +103,6 @@ class MobileNetV3Detector(AbstractDetector):
             }
             inference_results.append(inference_result)
         return inference_results
-
-
-
 
     def __repr__(self):
         return "< MobileNetV3Detector >"

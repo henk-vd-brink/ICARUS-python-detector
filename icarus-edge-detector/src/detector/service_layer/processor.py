@@ -37,6 +37,5 @@ class Processor:
         data = self._handlers.detect(data)
         data = self._handlers.postprocess_data(data)
 
-        # self._handlers.store_image_on_file_system(data)
-
-        # self._handlers.send_stored_image_on_file_system_event_to_redis(data)
+        self._handlers.store_image_on_file_system(data)
+        self._handlers.send_stored_image_on_file_system_event_to_bus(data)

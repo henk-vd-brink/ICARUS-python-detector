@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  icarus-detector:
+  icarus-edge-detector:
     image: cricarusprod001.azurecr.io/icarus-edge-detector
-    container_name: icarus-detector
+    container_name: icarus-edge-detector
     devices:
       - /dev/video0:/dev/video0
     runtime: nvidia
@@ -15,3 +15,4 @@ services:
     #   - "python3"
     #   - "-m"
     #   - "src.detector.entrypoints.gstreamer_app"
+

@@ -19,7 +19,7 @@ def store_image_on_file_system(data, file_saver, encoding="png") -> None:
     _, file_bytes = file_saver.encode_image(data.raw_image)
     file_saver.save_file(file_name, file_bytes)
 
-def send_stored_image_on_file_system_event_to_redis(data, mq_client) -> None:
+def send_stored_image_on_file_system_event_to_bus(data, mq_client) -> None:
     uuid = data.meta_data.get("uuid")
 
     message = dict(
