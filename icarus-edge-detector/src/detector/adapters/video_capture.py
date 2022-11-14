@@ -14,7 +14,7 @@ class VideoCapture():
 
 
 class FakeVideoCapture:
-    def __init__(self, path_to_image="/home/docker_user/assets/test-livingroom.jpg"):
+    def __init__(self, path_to_image):
         self._image = cv2.imread(path_to_image)
 
     def __enter__(self, *args, **kwargs):
