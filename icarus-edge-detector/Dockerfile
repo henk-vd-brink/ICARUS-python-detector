@@ -10,7 +10,6 @@ RUN useradd -m docker_user \
 COPY requirements.txt ${HOME}/requirements.txt
 RUN pip3 install -r ${HOME}/requirements.txt
 
-COPY assets ${HOME}/assets
 COPY scripts ${HOME}/scripts
 RUN chmod +x ${HOME}/scripts/*.sh
 
