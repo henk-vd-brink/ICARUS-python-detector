@@ -3,3 +3,4 @@ schema
 aiohttp
 numpy
 redis
+pytest

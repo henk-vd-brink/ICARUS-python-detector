@@ -1,0 +1,7 @@
+version: "3.8"
+
+services:
+  icarus-edge-detector:
+    image: cricarusprod001.azurecr.io/icarus-edge-detector
+    volumes:
+      - ${PWD}/assets:/home/docker_user/assets

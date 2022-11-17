@@ -12,6 +12,6 @@ services:
       - ${PWD}/icarus-edge-detector/src:/home/docker_user/src
       - ${PWD}/assets:/home/docker_user/assets
     entrypoint: 
-      - /home/docker_user/scripts/start.sh
+      - /home/docker_user/scripts/start.dev.sh
       - ${INFERENCE_MODEL}
 

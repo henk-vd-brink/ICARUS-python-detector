@@ -14,6 +14,6 @@ COPY scripts ${HOME}/scripts
 RUN chmod +x ${HOME}/scripts/*.sh
 
 COPY src ${HOME}/src
+COPY tests ${HOME}/tests
 
-
-
+RUN pip3 install -e src/
