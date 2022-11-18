@@ -5,7 +5,8 @@ import logging
 from . import config
 from .adapters import senders, video_capture as vc, savers, mq_clients
 from .service_layer import handlers, processor
-from .domain import services as domain_services
+from .domain.services import preprocessors, detectors, postprocessors
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -30,9 +31,9 @@ def inject_dependencies_into_handlers(handler_module, dependencies):
 
 def bootstrap(
     sender = senders.HttpSender(config={}),
-    preprocessor = domain_services.preprocessors.MobileNetV3Preprocessor(),
-    detector = domain_services.detectors.MobileNetV3Detector(),
-    postprocessor = domain_services.postprocessors.MobileNetV3Postprocessor(),
+    preprocessor = preprocessors.YoloV5Preprocessor(),
+    detector = detectors.YoloV5Detector(config.get_yolo_v5_detector_config()),
+    postprocessor = postprocessors.MobileNetV3Postprocessor(),
     video_capture = vc.VideoCapture(),
     file_saver = savers.FileSystemSaver(),
     mq_client = mq_clients.RabbitMqClient()

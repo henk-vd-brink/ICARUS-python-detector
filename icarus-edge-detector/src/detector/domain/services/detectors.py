@@ -9,7 +9,7 @@ import pycuda.driver as cuda
 import torchvision
 import torchvision.transforms as transforms
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 class HostDeviceMem(object):
     def __init__(self, host_mem, device_mem):
@@ -102,7 +102,7 @@ class YoloV5Detector(AbstractDetector):
     def _warmup(self):
         image = np.ones((1, 3, self.image_size[0], self.image_size[1]))
         image = np.ascontiguousarray(image, dtype=np.float32)
-        [self._inference(image) for _ in range(20)]
+        [self._inference(image) for _ in range(1)]
 
     def _inference(self, image):
         self.inputs[0]["host"] = np.ravel(image)
@@ -128,68 +128,49 @@ class YoloV5Detector(AbstractDetector):
             print(e)
             return []
 
-    def detect(self, image):
-        
+    def detect(self, data):
+        image = data.image
+
         self.cfx.push()
         inference_results = self.inference(image)
         self.cfx.pop()
 
-        if not inference_results:
-            return []
+        predictions = np.reshape(inference_results, (1, -1, int(5 + self.n_classes)))[0]
+        boxes, scores, labels = self._post_processing(predictions)
 
-        predictions = np.reshape(inference_results, (1, -1, int(5 + self.n_classes)))
-        detections = self._post_processing(predictions, ratio=1)
-        print(detections)
-        return  
-
-    def _post_processing(self, predictions, ratio=1):
-        boxes = []
-        scores = []
-
-        for prediction in predictions:
-            box = prediction[:, :4]
-            scores = prediction[:, 4:5] * prediction[:, 5:]
-
-            box_xyxy = np.ones_like(box)
-            box_xyxy[:, 0] = box[:, 0] - box[:, 2] / 2.0
-            box_xyxy[:, 1] = box[:, 1] - box[:, 3] / 2.0
-            box_xyxy[:, 2] = box[:, 0] + box[:, 2] / 2.0
-            box_xyxy[:, 3] = box[:, 1] + box[:, 3] / 2.0
-            box_xyxy /= ratio
-
-            best_idx_box_xyxy = scores[:, 0].argsort()[-1]
-
-
-            print(box_xyxy)
-        return 1
-
-
-
-    def multiclass_nms(self, boxes, scores, nms_thr, score_thr):
-        """Multiclass NMS implemented in Numpy"""
-        final_dets = []
-        num_classes = scores.shape[1]
-        for cls_ind in range(num_classes):
-            cls_scores = scores[:, cls_ind]
-            valid_score_mask = cls_scores > score_thr
-            if valid_score_mask.sum() == 0:
+        for i in range(len(boxes[:,0])):
+            if scores[i] < 0.8:
                 continue
-            else:
-                valid_scores = cls_scores[valid_score_mask]
-                valid_boxes = boxes[valid_score_mask]
-                keep = nms(valid_boxes, valid_scores, nms_thr)
-                if len(keep) > 0:
-                    cls_inds = np.ones((len(keep), 1)) * cls_ind
-                    dets = np.concatenate(
-                        [valid_boxes[keep], valid_scores[keep, None], cls_inds], 1
-                    )
-                    final_dets.append(dets)
-        if len(final_dets) == 0:
-            return None
-        return np.concatenate(final_dets, 0)
 
+            label = labels[i]
+            
+            if label == 0:
+                continue
 
+            print(label)
 
+            box = boxes[i, :]
+
+            x_1, y_1, x_2, y_2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
+            cv2.rectangle(data.raw_image, (x_1, y_1), (x_2, y_2), (255, 0, 0), 5)
+
+        cv2.imwrite("/home/docker_user/assets/joe.png", data.raw_image)
+
+        return data
+
+    def _post_processing(self, predictions, ratio = (1.796875, 1.09375)):
+        boxes = predictions[:, 0:4] # x,y,w,h
+        scores = np.max(predictions[:, 4:5] * predictions[:, 5:], axis=1)
+        
+        boxes_xyxy = np.ones_like(boxes)
+        boxes_xyxy[:, 0] = (boxes[:, 0] - boxes[:, 2] / 2.0) * ratio[0]
+        boxes_xyxy[:, 1] = (boxes[:, 1] - boxes[:, 3] / 2.0) * ratio[1]
+        boxes_xyxy[:, 2] = (boxes[:, 0] + boxes[:, 2] / 2.0) * ratio[0]
+        boxes_xyxy[:, 3] = (boxes[:, 1] + boxes[:, 3] / 2.0) * ratio[1]
+
+        labels = np.argmax(predictions[5:], axis=1)
+
+        return boxes_xyxy, scores, labels
 
 
     def __repr__(self):

@@ -55,12 +55,12 @@ class YoloV5Preprocessor(AbstractPreprocessor):
         self._parse_config(config)
         
     def _parse_config(self, config):
-        self._desired_image_width = config.get("desired_image_width", 320)
-        self._desired_image_height = config.get("desired_image_height", 320)
+        self._desired_image_width = config.get("desired_image_width", 640)
+        self._desired_image_height = config.get("desired_image_height", 640)
 
     def _preprocess(self, data):
         new_image_resolution = (self._desired_image_width, self._desired_image_height)
-        data.image = cv2.resize(data.raw_image,  new_image_resolution, interpolation = cv2.INTER_AREA)
+        data.image = cv2.resize(data.image,  new_image_resolution, interpolation = cv2.INTER_AREA)
         return data
 
     def __repr__(self):

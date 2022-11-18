@@ -1,9 +1,12 @@
 import cv2
 import uuid
 import datetime
+import logging
 import numpy as np
 
 from dataclasses import field, dataclass, asdict
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class Data:
@@ -32,6 +35,8 @@ class Processor:
 
     def handle_image(self, image):
         data = self._initialise_data_from_image(image)
+        logger.info(data.raw_image.shape)
+        
 
         data = self._handlers.preprocess_data(data)
         data = self._handlers.detect(data)
