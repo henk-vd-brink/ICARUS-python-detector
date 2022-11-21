@@ -138,13 +138,11 @@ class YoloV5Detector(AbstractDetector):
         predictions = np.reshape(inference_results, (1, -1, int(5 + self.n_classes)))[0]
         boxes, confidences, labels = self._post_processing(predictions)
 
-        print(len(labels))
-
-
-        for i in range(len(boxes[:,0])-1):
+        for i in range(len(labels)):
             try:
 
                 label = labels[i]
+                print(label)
 
                 if label != 1:
                     continue
@@ -152,7 +150,8 @@ class YoloV5Detector(AbstractDetector):
                 box = boxes[i, :]
                 x_1, y_1, x_2, y_2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
                 cv2.rectangle(data.raw_image, (x_1, y_1), (x_2, y_2), (255, 0, 0), 5)
-            except Exception:
+            except Exception as e:
+
                 pass
 
         cv2.imwrite("/home/docker_user/assets/joe.png", data.raw_image)
