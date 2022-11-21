@@ -136,31 +136,31 @@ class YoloV5Detector(AbstractDetector):
         self.cfx.pop()
 
         predictions = np.reshape(inference_results, (1, -1, int(5 + self.n_classes)))[0]
-        boxes, scores, labels = self._post_processing(predictions)
+        boxes, confidences, labels = self._post_processing(predictions)
 
-        for i in range(len(boxes[:,0])):
-            if scores[i] < 0.8:
-                continue
+        print(len(labels))
 
-            label = labels[i]
-            
-            if label == 0:
-                continue
 
-            print(label)
+        for i in range(len(boxes[:,0])-1):
+            try:
 
-            box = boxes[i, :]
+                label = labels[i]
 
-            x_1, y_1, x_2, y_2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
-            cv2.rectangle(data.raw_image, (x_1, y_1), (x_2, y_2), (255, 0, 0), 5)
+                if label != 1:
+                    continue
+
+                box = boxes[i, :]
+                x_1, y_1, x_2, y_2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
+                cv2.rectangle(data.raw_image, (x_1, y_1), (x_2, y_2), (255, 0, 0), 5)
+            except Exception:
+                pass
 
         cv2.imwrite("/home/docker_user/assets/joe.png", data.raw_image)
-
         return data
 
     def _post_processing(self, predictions, ratio = (1.796875, 1.09375)):
         boxes = predictions[:, 0:4] # x,y,w,h
-        scores = np.max(predictions[:, 4:5] * predictions[:, 5:], axis=1)
+        confidences = predictions[:, 4:5]
         
         boxes_xyxy = np.ones_like(boxes)
         boxes_xyxy[:, 0] = (boxes[:, 0] - boxes[:, 2] / 2.0) * ratio[0]
@@ -170,7 +170,7 @@ class YoloV5Detector(AbstractDetector):
 
         labels = np.argmax(predictions[5:], axis=1)
 
-        return boxes_xyxy, scores, labels
+        return boxes_xyxy, confidences, labels
 
 
     def __repr__(self):

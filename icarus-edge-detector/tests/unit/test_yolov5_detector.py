@@ -7,12 +7,15 @@ class FakeData:
     pass
 
 def get_test_image(image_path="/home/docker_user/tests/assets/test_image.jpg"):
-    image = cv2.imread(image_path)
-    resized_image = cv2.resize(image, (640, 640), interpolation = cv2.INTER_AREA)
-    return image, np.ascontiguousarray(resized_image, dtype=np.float32)
+    raw_image = cv2.imread(image_path)
+    image = cv2.resize(raw_image.copy(), (640, 640), interpolation = cv2.INTER_AREA).astype(np.float16)
+    image /= 255.0  
+    image = np.moveaxis(image, -1, 0)        
+    batch = image[np.newaxis]
+    return raw_image, batch
 
 yolo_v5_detector_config = {"engine_path": "/home/docker_user/assets/yolov5n.trt", 
-"max_batch_size": 1, "dtype": np.float32, "confidence": 0.8, "image_size": (640, 640), "n_classes": 80}
+"max_batch_size": 1, "dtype": np.float16, "confidence": 0.8, "image_size": (640, 640), "n_classes": 80}
 
 # def test_can_instantiate_yolo_v5_detector():
 #     detector = detectors.YoloV5Detector(config=yolo_v5_detector_config)
