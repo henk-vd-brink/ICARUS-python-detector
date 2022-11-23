@@ -137,28 +137,34 @@ class YoloV5Detector(AbstractDetector):
 
         predictions = np.reshape(inference_results, (1, -1, int(5 + self.n_classes)))[0]
         boxes, confidences, labels = self._post_processing(predictions)
+        
+        print(confidences)
 
         for i in range(len(labels)):
             try:
 
-                label = labels[i]
-                print(label)
+                print(confidences[i])
 
-                if label != 1:
+                if confidences[i][0] < 5 * 1e-5:
+                    continue
+
+                label = labels[i]
+
+                if label == 0:
                     continue
 
                 box = boxes[i, :]
                 x_1, y_1, x_2, y_2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
                 cv2.rectangle(data.raw_image, (x_1, y_1), (x_2, y_2), (255, 0, 0), 5)
             except Exception as e:
-
+                print(e)
                 pass
 
         cv2.imwrite("/home/docker_user/assets/joe.png", data.raw_image)
         return data
 
     def _post_processing(self, predictions, ratio = (1.796875, 1.09375)):
-        boxes = predictions[:, 0:4] # x,y,w,h
+        boxes = predictions[:, 0:4] # x, y, w, h
         confidences = predictions[:, 4:5]
         
         boxes_xyxy = np.ones_like(boxes)

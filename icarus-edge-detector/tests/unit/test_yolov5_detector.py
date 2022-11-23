@@ -8,7 +8,7 @@ class FakeData:
 
 def get_test_image(image_path="/home/docker_user/tests/assets/test_image.jpg"):
     raw_image = cv2.imread(image_path)
-    image = cv2.resize(raw_image.copy(), (640, 640), interpolation = cv2.INTER_AREA).astype(np.float16)
+    image = cv2.resize(raw_image.copy(), (640, 640), interpolation = cv2.INTER_AREA).astype(np.float32)
     image /= 255.0  
     image = np.moveaxis(image, -1, 0)        
     batch = image[np.newaxis]
