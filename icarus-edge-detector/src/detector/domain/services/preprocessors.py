@@ -60,7 +60,13 @@ class YoloV5Preprocessor(AbstractPreprocessor):
 
     def _preprocess(self, data):
         new_image_resolution = (self._desired_image_width, self._desired_image_height)
-        data.image = cv2.resize(data.image,  new_image_resolution, interpolation = cv2.INTER_AREA)
+        
+        image = cv2.resize(data.image,  new_image_resolution, interpolation = cv2.INTER_AREA).astype(np.float32)
+        image /= 255.0  
+        image   = np.moveaxis(image, -1, 0)        
+        batch = image[np.newaxis]
+        data.image = batch
+
         return data
 
     def __repr__(self):

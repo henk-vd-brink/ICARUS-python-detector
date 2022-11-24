@@ -10,9 +10,6 @@ def preprocess_data(data, preprocessor):
 def detect(data, detector):
     return detector.detect(data)
 
-def postprocess_data(data, postprocessor):
-    return postprocessor.postprocess(data)
-
 def store_image_on_file_system(data, file_saver, encoding="png") -> None:
     file_name = data.meta_data.get("uuid") + "." + encoding
 
@@ -28,6 +25,6 @@ def send_stored_image_on_file_system_event_to_bus(data, mq_client) -> None:
         file_name = uuid + ".png",
         inference_results = data.inference_results
     )
-
-    mq_client.publish("test", message)
+    print(message)
+    # mq_client.publish("test", message)
 

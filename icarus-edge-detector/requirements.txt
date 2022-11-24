@@ -4,3 +4,4 @@ aiohttp
 numpy
 redis
 pytest
+numba

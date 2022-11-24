@@ -5,7 +5,7 @@ import logging
 from . import config
 from .adapters import senders, video_capture as vc, savers, mq_clients
 from .service_layer import handlers, processor
-from .domain.services import preprocessors, detectors, postprocessors
+from .domain.services import preprocessors, detectors
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -33,7 +33,6 @@ def bootstrap(
     sender = senders.HttpSender(config={}),
     preprocessor = preprocessors.YoloV5Preprocessor(),
     detector = detectors.YoloV5Detector(config.get_yolo_v5_detector_config()),
-    postprocessor = postprocessors.MobileNetV3Postprocessor(),
     video_capture = vc.VideoCapture(),
     file_saver = savers.FileSystemSaver(),
     mq_client = mq_clients.RabbitMqClient()
@@ -45,13 +44,11 @@ def bootstrap(
         "Initialised APP \n --- \n"
         f"SELECTED preprocessor: {preprocessor}\n"
         f"SELECTED detector: {detector}\n"
-        f"SELECTED postprocessor: {postprocessor}\n"
         " ---"
     )
 
     dependencies = {
         "preprocessor": preprocessor,
-        "postprocessor": postprocessor,
         "detector": detector,
         "sender": sender,
         "file_saver": file_saver,
