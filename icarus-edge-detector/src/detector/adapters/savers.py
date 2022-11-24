@@ -17,7 +17,7 @@ class FileSystemSaver(AbstractSaver):
         self._parse_config(config)
 
     def _parse_config(self, config):
-        self._base_path = self._config.get("base_path", "/home/docker_user/data/")
+        self._base_path = self._config.get("base_path", "/dev/shm")
         
         if not os.path.exists(self._base_path):
             os.mkdir(self._base_path)
@@ -29,7 +29,7 @@ class FileSystemSaver(AbstractSaver):
             logger.exception(e)
 
     def _save_file(self, file_name, file_bytes):
-        with open(self._base_path + file_name, "wb") as file:
+        with open(self._base_path + "/" + file_name, "wb") as file:
             file.write(file_bytes)
 
     @staticmethod

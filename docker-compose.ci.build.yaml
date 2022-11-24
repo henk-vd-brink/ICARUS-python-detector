@@ -7,8 +7,14 @@ services:
       dockerfile: Dockerfile
     image: cricarusprod001.azurecr.io/icarus-edge-detector
 
-  icarus-edge-rabbitmqbroker:
+  icarus-edge-sender:
     build:
-      context: icarus-edge-rabbitmqbroker
+      context: icarus-edge-sender
       dockerfile: Dockerfile
-    image: cricarusprod001.azurecr.io/icarus-edge-rabbitmqbroker
+    image: cricarusprod001.azurecr.io/icarus-edge-sender
+
+  icarus-edge-redis:
+    build:
+      context: icarus-edge-redis
+      dockerfile: Dockerfile
+    image: cricarusprod001.azurecr.io/icarus-edge-redis

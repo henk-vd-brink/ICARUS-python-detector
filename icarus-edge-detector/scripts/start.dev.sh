@@ -17,4 +17,4 @@ else
         --onnx=${PWD}/assets/${FILE_NAME_PREFIX}.onnx # input
 fi
 
-python3 -m src.detector.entrypoints.gstreamer_app
+python3 -u -m src.detector.entrypoints.gstreamer_app

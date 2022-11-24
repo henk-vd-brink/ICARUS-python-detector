@@ -10,21 +10,24 @@ def preprocess_data(data, preprocessor):
 def detect(data, detector):
     return detector.detect(data)
 
-def store_image_on_file_system(data, file_saver, encoding="png") -> None:
-    file_name = data.meta_data.get("uuid") + "." + encoding
+def store_image_on_file_system(input_dict, file_saver, encoding="png") -> None:
+    file_name = input_dict["meta_data"].get("uuid") + "." + encoding
+    image = input_dict["image"]
 
-    _, file_bytes = file_saver.encode_image(data.raw_image)
+    _, file_bytes = file_saver.encode_image(image)
     file_saver.save_file(file_name, file_bytes)
 
-def send_stored_image_on_file_system_event_to_bus(data, mq_client) -> None:
-    uuid = data.meta_data.get("uuid")
+def send_stored_image_on_file_system_event_to_bus(input_dict, mq_client) -> None:
+    uuid = input_dict["meta_data"].get("uuid") 
+    timestamp = input_dict["meta_data"].get("timestamp") 
+    inference_results = input_dict["detections"]
 
     message = dict(
-        timestamp = data.meta_data.get("timestamp"),
+        timestamp = timestamp,
         uuid = uuid,
         file_name = uuid + ".png",
-        inference_results = data.inference_results
+        inference_results = inference_results
     )
-    print(message)
-    # mq_client.publish("test", message)
+    
+    mq_client.publish("test", message)
 

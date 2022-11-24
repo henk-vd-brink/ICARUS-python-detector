@@ -38,3 +38,17 @@ class RabbitMqClient(AbstractMqClient):
         #     data = json.dumps(data)
 
         print(data)
+
+class RedisClient(AbstractMqClient):
+    def __init__(self, config = {}):
+        self._config = config
+
+    def _connect(self):
+        self._connection = redis.StrictRedis(host = self._config.get("host"), port=6379, db=0, charset="utf-8", decode_responses=True)
+
+    def _publish(self, topic: str, message: dict):
+        
+        if isinstance(message, dict):
+            message = json.dumps(message)
+
+        self._connection.publish(topic, message)

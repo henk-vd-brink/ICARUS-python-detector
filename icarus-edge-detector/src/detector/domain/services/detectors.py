@@ -108,7 +108,7 @@ class YoloV5Detector(AbstractDetector):
     def _warmup(self):
         image = np.ones((1, 3, self.image_size[0], self.image_size[1]))
         image = np.ascontiguousarray(image, dtype=np.float32)
-        [self._inference(image) for _ in range(10)]
+        [self._inference(image) for _ in range(20)]
 
     def _inference(self, image):
         self.inputs[0]["host"] = np.ravel(image)
@@ -134,33 +134,20 @@ class YoloV5Detector(AbstractDetector):
             print(e)
             return []
 
-    def detect(self, data):
-        image = data.image
+    def detect(self, image):
 
         self.cfx.push()
         inference_results = self.inference(image)
         self.cfx.pop()
 
+        if not inference_results:
+            return []
+
         predictions = np.reshape(inference_results, (1, -1, int(5 + self.n_classes)))[0]
         detections = self._post_processing(predictions, ratio = self._ratio)
+        return detections
 
-        data.inference_results = detections
-
-        # return data
-
-        # for i in range(len(detections)):
-        #     try:
-        #         box = detections[i, 0:4]
-        #         x_1, y_1, x_2, y_2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
-        #         cv2.rectangle(data.raw_image, (x_1, y_1), (x_2, y_2), (255, 0, 0), 5)
-        #     except Exception as e:
-        #         print(e)
-        #         pass
-
-        # cv2.imwrite("/home/docker_user/assets/joe.png", data.raw_image)
-        return data
-
-    def _post_processing(self, predictions, ratio = (1.796875, 1.09375)):
+    def _post_processing(self, predictions, ratio):
         boxes = predictions[:, 0:4]
         confidences = predictions[:, 4:5]
         scores = confidences * predictions[:, 5:]
@@ -173,13 +160,9 @@ class YoloV5Detector(AbstractDetector):
 
         detections = self.multiclass_nms(boxes_xyxy, scores, nms_thr=0.45, score_thr=0.1)
 
-        with open("/home/docker_user/assets/boxes_xyxy.pkl", "wb") as f:
-            pickle.dump(boxes_xyxy, f)
-
-        with open("/home/docker_user/assets/scores.pkl", "wb") as f:
-            pickle.dump(scores, f)
-
-        return detections
+        get_reformatted_detections = lambda x: {"class": self._labels[int(x[5])], "bounding_box": [int(x[0]), int(x[1]), int(x[2]), int(x[3])], "confidence": x[4]}
+        
+        return list(map(get_reformatted_detections, detections))
 
     # @numba.njit
     def nms(self, boxes, scores, nms_thr):
@@ -189,25 +172,25 @@ class YoloV5Detector(AbstractDetector):
         y2 = boxes[:, 3]
 
         areas = (x2 - x1 + 1) * (y2 - y1 + 1)
-        order = scores.argsort()[::-1]
+        indices = scores.argsort()[::-1]
 
         keep = []
-        while order.size > 0:
-            i = order[0]
+        while indices.size > 0:
+            i = indices[0]
             keep.append(i)
-            xx1 = np.maximum(x1[i], x1[order[1:]])
-            yy1 = np.maximum(y1[i], y1[order[1:]])
-            xx2 = np.minimum(x2[i], x2[order[1:]])
-            yy2 = np.minimum(y2[i], y2[order[1:]])
+            xx1 = np.maximum(x1[i], x1[indices[1:]])
+            yy1 = np.maximum(y1[i], y1[indices[1:]])
+            xx2 = np.minimum(x2[i], x2[indices[1:]])
+            yy2 = np.minimum(y2[i], y2[indices[1:]])
 
             w = np.maximum(0.0, xx2 - xx1 + 1)
             h = np.maximum(0.0, yy2 - yy1 + 1)
 
             inter = w * h
-            ovr = inter / (areas[i] + areas[order[1:]] - inter)
+            ovr = inter / (areas[i] + areas[indices[1:]] - inter)
 
             inds = np.where(ovr <= nms_thr)[0]
-            order = order[inds + 1]
+            indices = indices[inds + 1]
 
         return keep
 
@@ -236,9 +219,6 @@ class YoloV5Detector(AbstractDetector):
                 )
                 
                 final_dets.append(dets)
-
-        if len(final_dets) == 0:
-            return None
             
         return np.concatenate(final_dets, 0)
 

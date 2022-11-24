@@ -1,6 +1,12 @@
 version: "3.8"
 
 services:
+  icarus-edge-redis:
+    image: cricarusprod001.azurecr.io/icarus-edge-redis
+    container_name: icarus-edge-redis
+    ports:
+       - 6379:6379
+
   icarus-edge-detector:
     image: cricarusprod001.azurecr.io/icarus-edge-detector
     container_name: icarus-edge-detector
@@ -11,7 +17,22 @@ services:
     volumes:
       - ${PWD}/icarus-edge-detector/src:/home/docker_user/src
       - ${PWD}/assets:/home/docker_user/assets
+      - /dev/shm:/dev/shm
+    shm_size: '1gb'
     entrypoint: 
       - /home/docker_user/scripts/start.dev.sh
       - ${INFERENCE_MODEL}
+    depends_on:
+      - icarus-edge-redis
+
+  icarus-edge-sender:
+    image: cricarusprod001.azurecr.io/icarus-edge-sender
+    container_name: icarus-edge-sender
+    volumes:
+      - /dev/shm:/dev/shm
+    entrypoint: 
+      - /home/docker_user/scripts/start.dev.sh
+      - ${INFERENCE_MODEL}
+    depends_on:
+      - icarus-edge-redis
 

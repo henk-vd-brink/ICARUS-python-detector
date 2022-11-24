@@ -35,7 +35,7 @@ def bootstrap(
     detector = detectors.YoloV5Detector(config.get_yolo_v5_detector_config()),
     video_capture = vc.VideoCapture(),
     file_saver = savers.FileSystemSaver(),
-    mq_client = mq_clients.RabbitMqClient()
+    mq_client = mq_clients.RedisClient(config.get_mq_config())
 ):   
 
     mq_client.connect()
