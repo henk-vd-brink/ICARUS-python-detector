@@ -108,7 +108,7 @@ class YoloV5Detector(AbstractDetector):
     def _warmup(self):
         image = np.ones((1, 3, self.image_size[0], self.image_size[1]))
         image = np.ascontiguousarray(image, dtype=np.float32)
-        [self._inference(image) for _ in range(20)]
+        [self._inference(image) for _ in range(2)]
 
     def _inference(self, image):
         self.inputs[0]["host"] = np.ravel(image)
@@ -145,7 +145,7 @@ class YoloV5Detector(AbstractDetector):
 
         predictions = np.reshape(inference_results, (1, -1, int(5 + self.n_classes)))[0]
         detections = self._post_processing(predictions, ratio = self._ratio)
-        return detections
+        return list(filter(lambda x: x.get("confidence") >= self._confidence, detections))
 
     def _post_processing(self, predictions, ratio):
         boxes = predictions[:, 0:4]
@@ -219,6 +219,9 @@ class YoloV5Detector(AbstractDetector):
                 )
                 
                 final_dets.append(dets)
+
+        if not final_dets:
+            return []
             
         return np.concatenate(final_dets, 0)
 

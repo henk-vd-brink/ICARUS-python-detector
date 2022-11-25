@@ -4,11 +4,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def preprocess_data(data, preprocessor):
-    return preprocessor.preprocess(data)
+def preprocess_data(image, preprocessor):
+    return preprocessor.preprocess(image)
 
-def detect(data, detector):
-    return detector.detect(data)
+def detect(image, detector):
+    return detector.detect(image)
 
 def store_image_on_file_system(input_dict, file_saver, encoding="png") -> None:
     file_name = input_dict["meta_data"].get("uuid") + "." + encoding

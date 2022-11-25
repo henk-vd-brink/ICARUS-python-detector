@@ -26,19 +26,6 @@ class AbstractMqClient(abc.ABC):
     def _publish(self, topic: str, data):
         pass
 
-class RabbitMqClient(AbstractMqClient):
-    def __init__(self, config = {}):
-        self._config = config
-
-    def _connect(self):
-       pass
-
-    def _publish(self, topic: str, data: dict):
-        # if isinstance(data, dict):
-        #     data = json.dumps(data)
-
-        print(data)
-
 class RedisClient(AbstractMqClient):
     def __init__(self, config = {}):
         self._config = config

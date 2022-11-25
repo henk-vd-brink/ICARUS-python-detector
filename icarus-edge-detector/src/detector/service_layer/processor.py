@@ -4,6 +4,7 @@ import datetime
 import time
 import logging
 import numpy as np
+import requests
 
 from dataclasses import field, dataclass, asdict
 
@@ -27,12 +28,14 @@ class Processor:
         t_0 = time.perf_counter()
         detections = self._handlers.detect(batch)
 
-        print("Number of dets: ", len(detections), " Detection time: ", time.perf_counter() - t_0)
+        print("Detection time: ", time.perf_counter() - t_0)
 
-        detections = list(filter(lambda x: x.get("class") == "person", detections))
+        # detections = list(filter(lambda x: x.get("class") == "person", detections))
 
         if not detections:
             return
+
+        print(detections)
 
         detection_results = dict(meta_data = meta_data, detections = detections)
 

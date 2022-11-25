@@ -17,4 +17,4 @@ def get_mq_config():
 
 def get_yolo_v5_detector_config():
     return {"engine_path": "/home/docker_user/assets/yolov5n.trt", 
-"max_batch_size": 1, "dtype": np.float16, "confidence": 0.8, "image_size": (640, 640), "n_classes": 80, "ratio": (3, 1.6875), "labels": get_labels_from_txt_file()}
+"max_batch_size": 1, "dtype": np.float16, "confidence": 0.6, "image_size": (640, 640), "n_classes": 80, "ratio": (3, 1.6875), "labels": get_labels_from_txt_file()}
