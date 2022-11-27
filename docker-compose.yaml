@@ -15,7 +15,6 @@ services:
     runtime: nvidia
     privileged: true
     volumes:
-      - ${PWD}/icarus-edge-detector/src:/home/docker_user/src
       - ${PWD}/assets:/home/docker_user/assets
       - /dev/shm:/dev/shm
     shm_size: '1gb'
