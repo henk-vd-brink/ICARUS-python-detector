@@ -10,3 +10,6 @@ test_build:
 
 test_unit: test_build
 	docker-compose -f docker-compose.ci.test.yaml run --entrypoint=pytest icarus-edge-detector /home/docker_user/tests/unit
+
+black:
+	python3 -m black .

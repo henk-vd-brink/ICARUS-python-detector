@@ -2,6 +2,7 @@ import inspect
 
 from . import test_module
 
+
 def inject_dependencies(function, dependencies):
     params = inspect.signature(function).parameters
 
@@ -9,6 +10,7 @@ def inject_dependencies(function, dependencies):
         name: dependency for name, dependency in dependencies.items() if name in params
     }
     return lambda message: function(message, **deps)
+
 
 def bootstrap():
 
@@ -20,8 +22,3 @@ def bootstrap():
     for function in functions:
         function_name, function = function
         setattr(test_module, function_name, inject_dependencies(function, dependencies))
-
-
-
-
-

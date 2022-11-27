@@ -6,19 +6,21 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
+
 class AbstractSaver(abc.ABC):
-    def __init__(self, config = {}):
+    def __init__(self, config={}):
         self._config = config
 
+
 class FileSystemSaver(AbstractSaver):
-    def __init__(self, config = {}):
+    def __init__(self, config={}):
         super().__init__(config)
 
         self._parse_config(config)
 
     def _parse_config(self, config):
-        self._base_path = self._config.get("base_path", "/dev/shm")
-        
+        self._base_path = config.get("base_path", "/dev/shm")
+
         if not os.path.exists(self._base_path):
             os.mkdir(self._base_path)
 
@@ -33,7 +35,7 @@ class FileSystemSaver(AbstractSaver):
             file.write(file_bytes)
 
     @staticmethod
-    def encode_image(image, encoding="png"):
+    def encode_image(image, encoding="jpg"):
         if not isinstance(image, np.ndarray):
             raise TypeError(f"Cannot encode image of type: {type(image)}")
 

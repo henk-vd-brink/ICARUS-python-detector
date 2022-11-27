@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 processor, video_capture = bootstrap.bootstrap()
 
+
 def main():
     with video_capture as vc:
         while True:
@@ -16,7 +17,7 @@ def main():
 
             if not ret:
                 break
-                
+
             processor.handle_image(image)
 
 

@@ -1,47 +1,22 @@
 import abc
 import logging
-import torch
+import time
 import numpy as np
-import numba
-import cv2
-import pickle
 import tensorrt as trt
-import pycuda.autoinit
 import pycuda.driver as cuda
-import torchvision
-import torchvision.transforms as transforms
 
 logger = logging.getLogger(__name__)
 
-class HostDeviceMem(object):
-    def __init__(self, host_mem, device_mem):
-        self.host = host_mem
-        self.device = device_mem
-
-    def __str__(self):
-        return "Host:\n" + str(self.host) + "\nDevice:\n" + str(self.device)
-
-    def __repr__(self):
-        return self.__str__()
+from ...utils import timer
 
 
 class AbstractDetector(abc.ABC):
-    pass
+    @abc.abstractmethod
+    def detect(self, image):
+        pass
 
-
-class FakeDetector(AbstractDetector):
-    
-    inference_results = [{"class": "person", "bounding_box": [0.1, 0.2, 0.3, 0.4], "confidence": 0.3}]
-
-    def detect(self, data):
-        data.inference_results = self.inference_results
-        return data
-
-    def __repr__(self):
-        return "< FakeDetector >"
 
 class YoloV5Detector(AbstractDetector):
-
     def __init__(self, config={}):
 
         self._ratio = config.get("ratio")
@@ -58,7 +33,9 @@ class YoloV5Detector(AbstractDetector):
         self.trt_runtime = trt.Runtime(self.logger)
         self.cfx = cuda.Device(0).make_context()
 
-        self.engine = self._load_engine_from_path(self.trt_runtime, config.get("engine_path"))
+        self.engine = self._load_engine_from_path(
+            self.trt_runtime, config.get("engine_path")
+        )
 
         self.context = self.engine.create_execution_context()
 
@@ -75,21 +52,20 @@ class YoloV5Detector(AbstractDetector):
 
         self._warmup()
 
-
     def _load_engine_from_path(self, trt_runtime, engine_path):
         trt.init_libnvinfer_plugins(self.logger, "")
 
-        with open(engine_path, 'rb') as f:
+        with open(engine_path, "rb") as f:
             engine_data = f.read()
 
         return trt_runtime.deserialize_cuda_engine(engine_data)
 
-    def _allocate_buffers(self):        
+    def _allocate_buffers(self):
         inputs = []
         outputs = []
         bindings = []
         stream = cuda.Stream()
-        
+
         for binding in self.engine:
             size = trt.volume(self.engine.get_binding_shape(binding))
             dtype = trt.nptype(self.engine.get_binding_dtype(binding))
@@ -108,7 +84,7 @@ class YoloV5Detector(AbstractDetector):
     def _warmup(self):
         image = np.ones((1, 3, self.image_size[0], self.image_size[1]))
         image = np.ascontiguousarray(image, dtype=np.float32)
-        [self._inference(image) for _ in range(2)]
+        [self._inference(image) for _ in range(20)]
 
     def _inference(self, image):
         self.inputs[0]["host"] = np.ravel(image)
@@ -126,7 +102,8 @@ class YoloV5Detector(AbstractDetector):
         self.stream.synchronize()
 
         return list(map(lambda x: x["host"], self.outputs))
-    
+
+    @timer
     def inference(self, image):
         try:
             return self._inference(image)
@@ -144,27 +121,34 @@ class YoloV5Detector(AbstractDetector):
             return []
 
         predictions = np.reshape(inference_results, (1, -1, int(5 + self.n_classes)))[0]
-        detections = self._post_processing(predictions, ratio = self._ratio)
-        return list(filter(lambda x: x.get("confidence") >= self._confidence, detections))
+        detections = self._post_processing(predictions, ratio=self._ratio)
+        return list(
+            filter(lambda x: x.get("confidence") >= self._confidence, detections)
+        )
 
+    @timer
     def _post_processing(self, predictions, ratio):
         boxes = predictions[:, 0:4]
         confidences = predictions[:, 4:5]
         scores = confidences * predictions[:, 5:]
-        
+
         boxes_xyxy = np.ones_like(boxes)
         boxes_xyxy[:, 0] = (boxes[:, 0] - boxes[:, 2] / 2.0) * ratio[0]
         boxes_xyxy[:, 1] = (boxes[:, 1] - boxes[:, 3] / 2.0) * ratio[1]
         boxes_xyxy[:, 2] = (boxes[:, 0] + boxes[:, 2] / 2.0) * ratio[0]
         boxes_xyxy[:, 3] = (boxes[:, 1] + boxes[:, 3] / 2.0) * ratio[1]
 
-        detections = self.multiclass_nms(boxes_xyxy, scores, nms_thr=0.45, score_thr=0.1)
+        detections = self.multiclass_nms(
+            boxes_xyxy, scores, nms_thr=0.45, score_thr=0.1
+        )
 
-        get_reformatted_detections = lambda x: {"class": self._labels[int(x[5])], "bounding_box": [int(x[0]), int(x[1]), int(x[2]), int(x[3])], "confidence": x[4]}
-        
+        get_reformatted_detections = lambda x: {
+            "label": self._labels[int(x[5])],
+            "bounding_box": [int(x[0]), int(x[1]), int(x[2]), int(x[3])],
+            "confidence": x[4],
+        }
         return list(map(get_reformatted_detections, detections))
 
-    # @numba.njit
     def nms(self, boxes, scores, nms_thr):
         x1 = boxes[:, 0]
         y1 = boxes[:, 1]
@@ -194,7 +178,6 @@ class YoloV5Detector(AbstractDetector):
 
         return keep
 
-    # @numba.njit
     def multiclass_nms(self, boxes, scores, nms_thr, score_thr):
         """Multiclass NMS implemented in Numpy"""
         final_dets = []
@@ -202,7 +185,7 @@ class YoloV5Detector(AbstractDetector):
         for cls_ind in range(scores.shape[1]):
             cls_scores = scores[:, cls_ind]
             valid_score_mask = cls_scores > score_thr
-            
+
             if valid_score_mask.sum() == 0:
                 continue
 
@@ -213,18 +196,17 @@ class YoloV5Detector(AbstractDetector):
 
             if len(keep) > 0:
                 cls_inds = np.ones((len(keep), 1)) * cls_ind
-                
+
                 dets = np.concatenate(
                     [valid_boxes[keep], valid_scores[keep, None], cls_inds], 1
                 )
-                
+
                 final_dets.append(dets)
 
         if not final_dets:
             return []
-            
-        return np.concatenate(final_dets, 0)
 
+        return np.concatenate(final_dets, 0)
 
     def __repr__(self):
         return "< YoloV5Detector >"
