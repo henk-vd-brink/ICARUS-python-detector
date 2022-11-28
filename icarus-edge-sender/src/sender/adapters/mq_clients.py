@@ -7,8 +7,8 @@ class RabbitMqClient:
         self._config = config
 
     def connect(self):
-        context = ssl.create_default_context(cafile="/home/docker_user/certs/root_ca.crt")
-        ssl_options = pika.SSLOptions(context, "client-1")
+        # context = ssl.create_default_context(cafile="/home/docker_user/certs/root_ca.crt")
+        # ssl_options = pika.SSLOptions(context, "client-1")
 
         credentials = pika.PlainCredentials(
             self._config.get("broker_username"), self._config.get("broker_password")
@@ -18,8 +18,7 @@ class RabbitMqClient:
             pika.ConnectionParameters(
                 host=self._config.get("broker_ip_address"),
                 port=self._config.get("broker_port"),
-                credentials=credentials,
-                ssl_options=ssl_options
+                credentials=credentials
             )
         )
 

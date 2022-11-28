@@ -1,8 +1,11 @@
 build_and_run:
 	./scripts/build_and_run.sh
 
-dev_build_and_run:
-	./scripts/build_and_run_dev.sh
+build_and_push:
+	./scripts/build_and_push.sh
+
+build_and_deploy:
+	./scripts/build_and_deploy_to_iotedge.sh
 
 # Tests
 test_build:
