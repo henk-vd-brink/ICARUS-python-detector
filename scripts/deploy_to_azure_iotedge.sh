@@ -10,6 +10,8 @@ pip3 install -r scripts/requirements.cd.txt
 
 python3 scripts/python/build_deployment_manifest.py
 
+az config set extension.use_dynamic_install=yes_without_prompt
+
 az iot edge deployment create \
     -d ${DEPLOYMENT_VERSION} \
     -n ${AZ_IOTHUB_NAME} \
