@@ -59,3 +59,8 @@ jobs:
           file: Dockerfile
           push: true
           tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-sender:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-sender:latest
+      -
+        name: 'Az CLI login'
+        uses: azure/actions/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
