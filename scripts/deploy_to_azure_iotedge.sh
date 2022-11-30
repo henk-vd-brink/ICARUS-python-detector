@@ -6,6 +6,8 @@ export DEPLOYMENT_VERSION=$2
 export AZ_IOTHUB_NAME="iot-icarus-prod-westeu-001"
 export AZ_TMP_DEPLOYMENT_FILE_PATH="/tmp/deployment_${DEPLOYMENT_VERSION}.json"
 
+pip3 install -r scripts/requirements.cd.txt
+
 python3 scripts/python/build_deployment_manifest.py
 
 az iot edge deployment create \
