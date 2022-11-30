@@ -32,6 +32,11 @@ jobs:
           registry: cricarusprod001.azurecr.io
           username: ${{ env.CRICARUSPROD001_USERNAME }}
           password: ${{ env.CRICARUSPROD001_ACCESS_TOKEN }}
+      - 
+        name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF_NAME}-${GITHUB_RUN_ID})"
+        id: extract_branch      
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -64,3 +69,11 @@ jobs:
         uses: azure/actions/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - 
+        name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            chmod +x $GITHUB_WORKSPACE/scripts/deploy_to_azure_iotedge.sh
+            $GITHUB_WORKSPACE/scripts/deploy_to_azure_iotedge.sh ${{ steps.extract_branch.outputs.tag }} dev-${{ steps.extract_branch.outputs.tag }}
