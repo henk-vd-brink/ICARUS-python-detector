@@ -1,4 +1,4 @@
-name: Build icarus-edge-detector
+name: Build and push icarus-edge-detector
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       -
-        name: Build and push
+        name: Build and push icarus-edge-detector
         uses: docker/build-push-action@v3
         with:
           context: "{{defaultContext}}:icarus-edge-detector"
@@ -44,7 +44,7 @@ jobs:
           push: true
           tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-detector:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-detector:latest
       -
-        name: Build and push
+        name: Build and push icarus-edge-redis
         uses: docker/build-push-action@v3
         with:
           context: "{{defaultContext}}:icarus-edge-redis"
@@ -52,7 +52,7 @@ jobs:
           push: true
           tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-redis:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-redis:latest
       -
-        name: Build and push
+        name: Build and push icarus-edge-sender
         uses: docker/build-push-action@v3
         with:
           context: "{{defaultContext}}:icarus-edge-sender"

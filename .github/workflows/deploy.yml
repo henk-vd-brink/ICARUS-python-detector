@@ -1,0 +1,32 @@
+name: Build and push icarus-edge-detector
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    environment: icarus
+    env: 
+      CRICARUSPROD001_USERNAME: ${{ secrets.CRICARUSPROD001_USERNAME }}
+      CRICARUSPROD001_ACCESS_TOKEN: ${{ secrets.CRICARUSPROD001_ACCESS_TOKEN }}
+      CRICARUSPROD001_URL: ${{ secrets.CRICARUSPROD001_URL }}
+      
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Checkout 
+        uses: actions/checkout@v3
+      - 
+        name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF_NAME}-${GITHUB_RUN_ID})"
+        id: extract_branch
+      -
+        name: 'Az CLI login'
+        uses: azure/actions/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
