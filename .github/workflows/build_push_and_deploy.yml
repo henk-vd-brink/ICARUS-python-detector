@@ -32,11 +32,6 @@ jobs:
           registry: cricarusprod001.azurecr.io
           username: ${{ env.CRICARUSPROD001_USERNAME }}
           password: ${{ env.CRICARUSPROD001_ACCESS_TOKEN }}
-      - 
-        name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF_NAME}-${GITHUB_RUN_ID})"
-        id: extract_branch      
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
