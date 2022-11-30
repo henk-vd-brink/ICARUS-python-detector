@@ -1,4 +1,4 @@
-name: Build and push icarus-edge-detector
+name: Deploy icarus-edge-detector
 
 on:
   push:
