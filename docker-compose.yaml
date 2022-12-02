@@ -22,16 +22,16 @@ services:
     depends_on:
       - icarus-edge-redis
 
-  icarus-edge-sender:
-    image: cricarusprod001.azurecr.io/icarus-edge-sender:${BUILD_VERSION:-latest}
-    container_name: icarus-edge-sender
-    volumes:
-      - /dev/shm:/dev/shm
-      - ./dev/certs/root_ca.crt:/home/docker_user/certs/root_ca.crt:ro
-    entrypoint: 
-      - /home/docker_user/scripts/start.dev.sh
-      - ${INFERENCE_MODEL}
-    depends_on:
-      - icarus-edge-redis
-    restart: always
+  # icarus-edge-sender:
+  #   image: cricarusprod001.azurecr.io/icarus-edge-sender:${BUILD_VERSION:-latest}
+  #   container_name: icarus-edge-sender
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  #     - ./dev/certs/root_ca.crt:/home/docker_user/certs/root_ca.crt:ro
+  #   entrypoint: 
+  #     - /home/docker_user/scripts/start.dev.sh
+  #     - ${INFERENCE_MODEL}
+  #   depends_on:
+  #     - icarus-edge-redis
+  #   restart: always
 
