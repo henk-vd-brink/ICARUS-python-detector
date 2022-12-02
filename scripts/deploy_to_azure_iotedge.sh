@@ -12,15 +12,8 @@ python3 scripts/python/build_deployment_manifest.py
 
 az config set extension.use_dynamic_install=yes_without_prompt
 
-echo $DEPLOYMENT_VERSION
-echo $AZ_IOTHUB_NAME
-echo $AZ_TMP_DEPLOYMENT_FILE_PATH
-
-echo $(ls)
-
 az iot edge deployment create \
     -d ${DEPLOYMENT_VERSION} \
     -n ${AZ_IOTHUB_NAME} \
     --content ${AZ_TMP_DEPLOYMENT_FILE_PATH} \
-    --target-condition "deviceId='jetsonnano0" \
     --priority 100

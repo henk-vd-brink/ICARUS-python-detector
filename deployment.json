@@ -1,5 +1,6 @@
 {
     "priority": 100,
+    "targetCondition": "tags.environment='test'",
     "content": {
         "modulesContent": {
             "$edgeAgent": {

@@ -1,0 +1,19 @@
+FROM test
+
+ENV HOME=/home/docker_user
+
+RUN curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+	    && python3 get-pip.py
+
+COPY requirements.txt ${HOME}/requirements.txt
+RUN pip3 install -r ${HOME}/requirements.txt
+
+COPY scripts ${HOME}/scripts
+RUN chmod +x ${HOME}/scripts/*.sh
+
+ENV export LD_LIBRARY_PATH="/path/of/libcuda.so.1:$LD_LIBRARY_PATH"; echo $LD_LIBRARY_PATH
+
+COPY src ${HOME}/src
+COPY tests ${HOME}/tests
+
+RUN pip3 install -e src/
