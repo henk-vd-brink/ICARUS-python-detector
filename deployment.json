@@ -12,7 +12,7 @@
                             "registryCredentials": {
                                 "cricarusprod001": {
                                     "address": "cricarusprod001.azurecr.io",
-                                    "password": "{{AZURE_CR_PASSWORD}}",
+                                    "password": "{{CRICARUSPROD001_ACCESS_TOKEN}}",
                                     "username": "cricarusprod001"
                                 }
                             }
