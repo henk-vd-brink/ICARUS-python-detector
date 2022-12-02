@@ -23,7 +23,7 @@ jobs:
       - 
         name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF_NAME}-${GITHUB_RUN_ID})"
+        run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF_NAME}-${GITHUB_SHA})"
         id: extract_branch
       -
         name: 'Az CLI login'
