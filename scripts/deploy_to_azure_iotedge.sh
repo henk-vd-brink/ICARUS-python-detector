@@ -16,5 +16,4 @@ az iot edge deployment create \
     -d ${DEPLOYMENT_VERSION} \
     -n ${AZ_IOTHUB_NAME} \
     --content ${AZ_TMP_DEPLOYMENT_FILE_PATH} \
-    --target-condition "deviceId='jetsonnano0" \
     --priority 100
