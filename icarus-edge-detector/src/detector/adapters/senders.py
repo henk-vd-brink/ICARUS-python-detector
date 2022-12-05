@@ -1,6 +1,5 @@
 import abc
 import asyncio
-import aiohttp
 import logging
 
 logger = logging.getLogger(__name__)

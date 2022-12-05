@@ -1,4 +1,4 @@
-name: Build and push icarus-edge-detector
+name: Build and Deploy
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
           username: ${{ env.CRICARUSPROD001_USERNAME }}
           password: ${{ env.CRICARUSPROD001_ACCESS_TOKEN }}
       -
-        name: Build and push icarus-edge-detector
+        name: Build and Push icarus-edge-detector
         uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -55,7 +55,7 @@ jobs:
           platforms: linux/arm64
           tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-detector:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-detector:latest
       -
-        name: Build and push icarus-edge-redis
+        name: Build and Push icarus-edge-redis
         uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -65,7 +65,7 @@ jobs:
           platforms: linux/arm64
           tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-redis:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-redis:latest
       -
-        name: Build and push icarus-edge-sender
+        name: Build and Push icarus-edge-sender
         uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -75,7 +75,7 @@ jobs:
           platforms: linux/arm64
           tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-sender:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-sender:latest
       -
-        name: 'Az CLI login'
+        name: Az CLI login
         uses: azure/actions/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
