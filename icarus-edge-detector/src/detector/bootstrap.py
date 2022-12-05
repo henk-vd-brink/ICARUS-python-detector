@@ -3,7 +3,7 @@ import queue
 import logging
 
 from . import config
-from .adapters import senders, video_capture as vc, savers, mq_clients
+from .adapters import video_capture as vc, savers, mq_clients
 from .service_layer import handlers, processor
 from .domain.services import preprocessors, detectors
 
@@ -25,7 +25,6 @@ def inject_dependencies(function, dependencies):
 
 def inject_dependencies_into_handlers(handler_module, dependencies):
     functions = inspect.getmembers(handler_module, inspect.isfunction)
-    injected_functions = {}
 
     for function in functions:
         function_name, function = function
@@ -35,7 +34,6 @@ def inject_dependencies_into_handlers(handler_module, dependencies):
 
 
 def bootstrap(
-    sender=senders.HttpSender(config={}),
     preprocessor=preprocessors.YoloV5Preprocessor(),
     detector=detectors.YoloV5Detector(config.get_yolo_v5_detector_config()),
     video_capture=vc.VideoCapture(config.get_video_capture_config()),
@@ -55,7 +53,6 @@ def bootstrap(
     dependencies = {
         "preprocessor": preprocessor,
         "detector": detector,
-        "sender": sender,
         "file_saver": file_saver,
         "mq_client": mq_client,
     }

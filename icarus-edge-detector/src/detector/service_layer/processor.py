@@ -17,7 +17,7 @@ class Processor:
         timestamp = datetime.datetime.now()
         return {
             "timestamp": timestamp.isoformat(),
-            "uuid": timestamp.strftime("%Y-%m-%d-%H-%M-%S")
+            "uuid": timestamp.strftime("%Y-%m-%d-%H-%M-%S-%f")
         }
 
     def handle_image(self, image):
@@ -27,7 +27,7 @@ class Processor:
 
         detections = self._handlers.detect(batch)
 
-        # detections = list(filter(lambda x: x.get("class") == "person", detections))
+        detections = list(filter(lambda x: x.get("label") == "person", detections))
 
         if not detections:
             return
@@ -37,4 +37,5 @@ class Processor:
         self._handlers.store_image_on_file_system(
             dict(meta_data=meta_data, image=image)
         )
+        
         self._handlers.send_stored_image_on_file_system_event_to_bus(detection_results)

@@ -37,4 +37,4 @@ class RedisClient(AbstractMqClient):
         if isinstance(message, dict):
             message = json.dumps(message)
 
-        self._connection.publish(topic, message)
+        self._connection.lpush(topic, message)

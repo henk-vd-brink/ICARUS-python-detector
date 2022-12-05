@@ -1,6 +1,5 @@
 import abc
 import os
-import cv2
 import logging
 import numpy as np
 
@@ -24,20 +23,15 @@ class FileSystemSaver(AbstractSaver):
         if not os.path.exists(self._base_path):
             os.mkdir(self._base_path)
 
-    def save_file(self, file_name, file_bytes):
+    def save_image(self, image_uuid, image, encoding):
         try:
-            self._save_file(file_name, file_bytes)
+            if encoding == "npy":
+                self._save_image_as_npy(image_uuid, image)
+            else:
+                raise Exception("wrong encoding")
         except Exception as e:
             logger.exception(e)
 
-    def _save_file(self, file_name, file_bytes):
-        with open(self._base_path + "/" + file_name, "wb") as file:
-            file.write(file_bytes)
-
-    @staticmethod
-    def encode_image(image, encoding="jpg"):
-        if not isinstance(image, np.ndarray):
-            raise TypeError(f"Cannot encode image of type: {type(image)}")
-
-        image_bytes = cv2.imencode("." + encoding, image)
-        return image_bytes
+    def _save_image_as_npy(self, image_uuid, image):
+        with open(self._base_path + "/" + image_uuid + ".npy", "wb") as file:
+            np.save(file, image)

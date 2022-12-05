@@ -2,8 +2,11 @@ import redis
 import pathlib
 import json
 import requests
+import io
 import logging
 import warnings
+import numpy as np
+import cv2
 
 warnings.filterwarnings(action="ignore", message="Unverified HTTPS request")
 
@@ -22,17 +25,24 @@ red = redis.StrictRedis(
 
 def get_file_bytes_from_file_name(file_name):
     try:
-        with open("/dev/shm/" + file_name, "rb") as f:
-            file_bytes = f.read()
-    except Exception:
+        with open("/dev/shm/" + file_name, "rb") as file:
+            file_bytes = np.load(file)
+    except Exception as e:
+        logger.warning("Could not retrieve file bytes")
+        logger.exception(e)
         file_bytes = bytes()
     return file_bytes
 
 
 
-def send_file_from_file_name(file_name):
-    files = {"file": (file_name, get_file_bytes_from_file_name(file_name))}
-    logger.info(file_name)
+def send_file_from_file_name(uuid, file_name):
+    _, buffer = cv2.imencode(".jpg", get_file_bytes_from_file_name(file_name))
+
+    image_as_jpg_bytes = io.BytesIO(buffer)
+
+    file_name_as_jpg = uuid + ".jpg"
+    files = {"file": (file_name_as_jpg, image_as_jpg_bytes)}
+    logger.info(file_name_as_jpg)
 
     try:
         response = requests.post(
@@ -50,26 +60,17 @@ def delete_file_from_file_name(file_name):
 
 
 def redis_consumer():
-    sub = red.pubsub()
-    sub.subscribe("test")
-
     while True:
-        message = sub.get_message()
 
-        if not message:
+        if red.llen("test") == 0:
             continue
 
-        data_from_message = message.get("data")
-
-        if not isinstance(data_from_message, str):
-            continue
-
-        data_from_message_as_dict = json.loads(message.get("data"))
+        data_from_message_as_dict = json.loads(red.rpop("test"))
 
         file_name = data_from_message_as_dict.get("file_name")
         uuid = data_from_message_as_dict.get("uuid")
 
-        send_file_from_file_name(file_name)
+        send_file_from_file_name(uuid, file_name)
         delete_file_from_file_name(file_name)
 
         inference_results = data_from_message_as_dict["inference_results"]

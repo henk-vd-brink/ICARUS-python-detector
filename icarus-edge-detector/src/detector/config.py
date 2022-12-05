@@ -1,6 +1,8 @@
 import cv2
+import logging
 import numpy as np
 
+logger = logging.getLogger(__name__)
 
 def get_video_capture_config():
     input_caps = (
@@ -19,6 +21,8 @@ def get_video_capture_config():
 def get_labels_from_txt_file(file_path="/home/docker_user/assets/coco_labels.txt"):
     with open(file_path, "r") as f:
         labels = f.readlines()
+
+    logger.info("Loaded labels, found %s labels", len(labels))
 
     return [l.replace("\n", "") for l in labels]
 

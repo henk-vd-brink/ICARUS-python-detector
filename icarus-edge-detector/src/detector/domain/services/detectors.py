@@ -126,7 +126,6 @@ class YoloV5Detector(AbstractDetector):
             filter(lambda x: x.get("confidence") >= self._confidence, detections)
         )
 
-    @timer
     def _post_processing(self, predictions, ratio):
         boxes = predictions[:, 0:4]
         confidences = predictions[:, 4:5]

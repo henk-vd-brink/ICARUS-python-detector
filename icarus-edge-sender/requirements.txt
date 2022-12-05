@@ -1,3 +1,4 @@
 redis
 requests
 pika
+opencv-python
