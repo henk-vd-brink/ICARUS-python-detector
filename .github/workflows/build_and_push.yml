@@ -33,6 +33,11 @@ jobs:
           username: ${{ env.CRICARUSPROD001_USERNAME }}
           password: ${{ env.CRICARUSPROD001_ACCESS_TOKEN }}
       -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@master
+        with:
+          platforms: all
+      - 
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       -
