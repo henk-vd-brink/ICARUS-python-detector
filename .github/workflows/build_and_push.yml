@@ -14,7 +14,7 @@ jobs:
       CRICARUSPROD001_ACCESS_TOKEN: ${{ secrets.CRICARUSPROD001_ACCESS_TOKEN }}
       CRICARUSPROD001_URL: ${{ secrets.CRICARUSPROD001_URL }}
       
-    runs-on: jp461
+    runs-on: ubuntu-latest
 
     steps:
       -
@@ -42,6 +42,7 @@ jobs:
           context: "{{defaultContext}}:icarus-edge-detector"
           file: Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64,linux/ppc64le
           tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-detector:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-detector:latest
       -
         name: Build and push icarus-edge-redis
@@ -50,6 +51,7 @@ jobs:
           context: "{{defaultContext}}:icarus-edge-redis"
           file: Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64,linux/ppc64le
           tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-redis:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-redis:latest
       -
         name: Build and push icarus-edge-sender
@@ -58,4 +60,5 @@ jobs:
           context: "{{defaultContext}}:icarus-edge-sender"
           file: Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64,linux/ppc64le
           tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-sender:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-sender:latest
