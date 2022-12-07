@@ -23,11 +23,13 @@ class YoloV5Detector(AbstractDetector):
         self._confidence = config.get("confidence")
         self._labels = config.get("labels")
 
+        self._nms_config = config.get("nms_config", dict())
+
         self.logger = trt.Logger()
 
         self.max_batch_size = config.get("max_batch_size", 1)
         self.dtype = config.get("dtype", np.float16)
-        self.image_size = config.get("image_size", (320, 320))
+        self.image_size = config.get("image_size", (640, 640))
         self.n_classes = config.get("n_classes", 80)
 
         self.trt_runtime = trt.Runtime(self.logger)
@@ -64,25 +66,26 @@ class YoloV5Detector(AbstractDetector):
         inputs = []
         outputs = []
         bindings = []
+
         stream = cuda.Stream()
 
         for binding in self.engine:
             size = trt.volume(self.engine.get_binding_shape(binding))
             dtype = trt.nptype(self.engine.get_binding_dtype(binding))
-            host_mem = cuda.pagelocked_empty(size, dtype)
-            device_mem = cuda.mem_alloc(host_mem.nbytes)
+            host_memory = cuda.pagelocked_empty(size, dtype)
+            device_memory = cuda.mem_alloc(host_memory.nbytes)
 
-            bindings.append(int(device_mem))
+            bindings.append(int(device_memory))
 
             if self.engine.binding_is_input(binding):
-                inputs.append({"host": host_mem, "device": device_mem})
+                inputs.append({"host": host_memory, "device": device_memory})
             else:
-                outputs.append({"host": host_mem, "device": device_mem})
+                outputs.append({"host": host_memory, "device": device_memory})
 
         return inputs, outputs, bindings, stream
 
     def _warmup(self):
-        image = np.ones((1, 3, self.image_size[0], self.image_size[1]))
+        image = np.ones((1, 3, *self.image_size))
         image = np.ascontiguousarray(image, dtype=np.float32)
         [self._inference(image) for _ in range(20)]
 
@@ -122,9 +125,22 @@ class YoloV5Detector(AbstractDetector):
 
         predictions = np.reshape(inference_results, (1, -1, int(5 + self.n_classes)))[0]
         detections = self._post_processing(predictions, ratio=self._ratio)
+
         return list(
             filter(lambda x: x.get("confidence") >= self._confidence, detections)
         )
+
+    def _get_reformatted_detection_from_detection(self, detection):
+        return {
+            "label": self._labels[int(detection[5])],
+            "bounding_box": [
+                int(detection[0]),
+                int(detection[1]),
+                int(detection[2]),
+                int(detection[3]),
+            ],
+            "confidence": detection[4],
+        }
 
     def _post_processing(self, predictions, ratio):
         boxes = predictions[:, 0:4]
@@ -137,16 +153,9 @@ class YoloV5Detector(AbstractDetector):
         boxes_xyxy[:, 2] = (boxes[:, 0] + boxes[:, 2] / 2.0) * ratio[0]
         boxes_xyxy[:, 3] = (boxes[:, 1] + boxes[:, 3] / 2.0) * ratio[1]
 
-        detections = self.multiclass_nms(
-            boxes_xyxy, scores, nms_thr=0.45, score_thr=0.1
-        )
+        detections = self.multiclass_nms(boxes_xyxy, scores)
 
-        get_reformatted_detections = lambda x: {
-            "label": self._labels[int(x[5])],
-            "bounding_box": [int(x[0]), int(x[1]), int(x[2]), int(x[3])],
-            "confidence": x[4],
-        }
-        return list(map(get_reformatted_detections, detections))
+        return list(map(self._get_reformatted_detection_from_detection, detections))
 
     def nms(self, boxes, scores, nms_thr):
         x1 = boxes[:, 0]
@@ -177,27 +186,30 @@ class YoloV5Detector(AbstractDetector):
 
         return keep
 
-    def multiclass_nms(self, boxes, scores, nms_thr, score_thr):
+    def multiclass_nms(self, boxes, scores):
         """Multiclass NMS implemented in Numpy"""
+        nms_threshold = self._nms_config.get("nms_threshold", 0.45)
+        score_threshold = self._nms_config.get("score_threshold", 0.1)
+
         final_dets = []
 
-        for cls_ind in range(scores.shape[1]):
-            cls_scores = scores[:, cls_ind]
-            valid_score_mask = cls_scores > score_thr
+        for label_index in range(scores.shape[1]):
+            label_scores = scores[:, label_index]
+            valid_score_mask = label_scores > score_threshold
 
             if valid_score_mask.sum() == 0:
                 continue
 
-            valid_scores = cls_scores[valid_score_mask]
+            valid_scores = label_scores[valid_score_mask]
             valid_boxes = boxes[valid_score_mask]
 
-            keep = self.nms(valid_boxes, valid_scores, nms_thr)
+            keep = self.nms(valid_boxes, valid_scores, nms_threshold)
 
             if len(keep) > 0:
-                cls_inds = np.ones((len(keep), 1)) * cls_ind
+                label_indexs = np.ones((len(keep), 1)) * label_index
 
                 dets = np.concatenate(
-                    [valid_boxes[keep], valid_scores[keep, None], cls_inds], 1
+                    [valid_boxes[keep], valid_scores[keep, None], label_indexs], 1
                 )
 
                 final_dets.append(dets)

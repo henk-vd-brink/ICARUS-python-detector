@@ -23,6 +23,7 @@ red = redis.StrictRedis(
     "icarus-edge-redis", 6379, charset="utf-8", decode_responses=True
 )
 
+
 def get_file_bytes_from_file_name(file_name):
     try:
         with open("/dev/shm/" + file_name, "rb") as file:
@@ -32,7 +33,6 @@ def get_file_bytes_from_file_name(file_name):
         logger.exception(e)
         file_bytes = bytes()
     return file_bytes
-
 
 
 def send_file_from_file_name(uuid, file_name):
@@ -74,22 +74,21 @@ def redis_consumer():
         delete_file_from_file_name(file_name)
 
         inference_results = data_from_message_as_dict["inference_results"]
-        
+
         message = dict(image_uuid=uuid, meta_data=[])
         for inference_result in inference_results:
             message["meta_data"].append(
                 dict(
-                    label = inference_result.get("label"),
-                    x_1 = inference_result.get("bounding_box")[0],
-                    y_1 = inference_result.get("bounding_box")[1],
-                    x_2 = inference_result.get("bounding_box")[2],
-                    y_2 = inference_result.get("bounding_box")[3],
-                    confidence = inference_result.get("confidence")
+                    label=inference_result.get("label"),
+                    x_1=inference_result.get("bounding_box")[0],
+                    y_1=inference_result.get("bounding_box")[1],
+                    x_2=inference_result.get("bounding_box")[2],
+                    y_2=inference_result.get("bounding_box")[3],
+                    confidence=inference_result.get("confidence"),
                 )
             )
-        
-        mq_client.publish(routing_key="DetectedObjects", body = message)
 
+        mq_client.publish(routing_key="DetectedObjects", body=message)
 
 
 if __name__ == "__main__":

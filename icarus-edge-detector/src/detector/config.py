@@ -1,13 +1,19 @@
 import cv2
+import os
 import logging
 import numpy as np
 
 logger = logging.getLogger(__name__)
 
+
 def get_video_capture_config():
+    height = int(os.environ.get("VIDEO_INPUT_HEIGHT", 1080))
+    width = int(os.environ.get("VIDEO_INPUT_WIDTH", 1920))
+    framerate = int(os.environ.get("VIDEO_INPUT_FRAMERATE", 30))
+
     input_caps = (
         "v4l2src device=/dev/video0 io-mode=2 "
-        "! image/jpeg,height=1080,width=1920 "
+        f"! image/jpeg,height={height},width={width},framerate={framerate}/1 "
         "! nvv4l2decoder mjpeg=1 "
         "! nvvidconv "
         "! video/x-raw,format=BGRx "
@@ -21,10 +27,7 @@ def get_video_capture_config():
 def get_labels_from_txt_file(file_path="/home/docker_user/assets/coco_labels.txt"):
     with open(file_path, "r") as f:
         labels = f.readlines()
-
-    logger.info("Loaded labels, found %s labels", len(labels))
-
-    return [l.replace("\n", "") for l in labels]
+    return [label.replace("\n", "") for label in labels]
 
 
 def get_mq_config():
@@ -32,13 +35,14 @@ def get_mq_config():
 
 
 def get_yolo_v5_detector_config():
-    return {
-        "engine_path": "/home/docker_user/assets/yolov5n.trt",
-        "max_batch_size": 1,
-        "dtype": np.float16,
-        "confidence": 0.6,
-        "image_size": (640, 640),
-        "n_classes": 80,
-        "ratio": (3, 1.6875),
-        "labels": get_labels_from_txt_file(),
-    }
+    return dict(
+        engine_path="/home/docker_user/assets/yolov5n.trt",
+        max_batch_size=1,
+        dtype=np.float16,
+        confidence=0.6,
+        image_size=(640, 640),
+        n_classes=80,
+        ratio=(3, 1.6875),
+        labels=get_labels_from_txt_file(),
+        nms_config=dict(nms_threshold=0.45, score_threshold=0.1),
+    )
