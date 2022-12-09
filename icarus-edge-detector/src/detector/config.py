@@ -6,10 +6,28 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
+def get_desired_video_configuration():
+    video_height = int(os.environ.get("VIDEO_OUTPUT_HEIGHT", 1080))
+    video_width = int(os.environ.get("VIDEO_OUTPUT_WIDTH", 1920))
+    video_framerate = int(os.environ.get("VIDEO_OUTPUT_FRAMERATE", 30))
+
+    detector_image_height = int(os.environ.get("DETECTOR_IMAGE_HEIGHT", 640))
+    detector_image_width = int(os.environ.get("DETECTOR_IMAGE_WIDTH", 640))
+
+    ratio = (video_width / detector_image_width, video_height / detector_image_height)
+
+    return (
+        video_height,
+        video_width,
+        video_framerate,
+        ratio,
+        detector_image_height,
+        detector_image_width,
+    )
+
+
 def get_video_capture_config():
-    height = int(os.environ.get("VIDEO_INPUT_HEIGHT", 1080))
-    width = int(os.environ.get("VIDEO_INPUT_WIDTH", 1920))
-    framerate = int(os.environ.get("VIDEO_INPUT_FRAMERATE", 30))
+    height, width, framerate, *_ = get_desired_video_configuration()
 
     input_caps = (
         "v4l2src device=/dev/video0 io-mode=2 "
@@ -35,14 +53,23 @@ def get_mq_config():
 
 
 def get_yolo_v5_detector_config():
+    (
+        _,
+        _,
+        _,
+        ratio,
+        detector_image_height,
+        detector_image_width,
+    ) = get_desired_video_configuration()
+
     return dict(
         engine_path="/home/docker_user/assets/yolov5n.trt",
         max_batch_size=1,
         dtype=np.float16,
         confidence=0.6,
-        image_size=(640, 640),
+        image_size=(detector_image_width, detector_image_height),
         n_classes=80,
-        ratio=(3, 1.6875),
+        ratio=ratio,
         labels=get_labels_from_txt_file(),
         nms_config=dict(nms_threshold=0.45, score_threshold=0.1),
     )

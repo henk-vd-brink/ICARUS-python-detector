@@ -16,27 +16,18 @@ logger = logging.getLogger(__name__)
 
 from .. import bootstrap
 
-mq_client = bootstrap.bootstrap()
-mq_client.connect()
+bootstrap_dict = bootstrap.bootstrap()
 
-red = redis.StrictRedis(
-    "icarus-edge-redis", 6379, charset="utf-8", decode_responses=True
-)
-
-
-def get_file_bytes_from_file_name(file_name):
-    try:
-        with open("/dev/shm/" + file_name, "rb") as file:
-            file_bytes = np.load(file)
-    except Exception as e:
-        logger.warning("Could not retrieve file bytes")
-        logger.exception(e)
-        file_bytes = bytes()
-    return file_bytes
+mq_client = bootstrap_dict["mq_client"]
+file_system_adapter = bootstrap_dict["file_system_adapter"]
+sender_adapter = bootstrap_dict["sender_adapter"]
+redis_client = bootstrap_dict["redis_mq_client"]
 
 
 def send_file_from_file_name(uuid, file_name):
-    _, buffer = cv2.imencode(".jpg", get_file_bytes_from_file_name(file_name))
+    file_bytes = file_system_adapter.get_file_bytes_from_file_name(file_name)
+
+    _, buffer = cv2.imencode(".jpg", file_bytes)
 
     image_as_jpg_bytes = io.BytesIO(buffer)
 
@@ -55,23 +46,19 @@ def send_file_from_file_name(uuid, file_name):
     return response.status_code
 
 
-def delete_file_from_file_name(file_name):
-    pathlib.Path("/dev/shm/" + file_name).unlink()
-
-
 def redis_consumer():
     while True:
 
-        if red.llen("test") == 0:
+        if redis_client.connection.llen("test") == 0:
             continue
 
-        data_from_message_as_dict = json.loads(red.rpop("test"))
+        data_from_message_as_dict = json.loads(redis_client.connection.rpop("test"))
 
         file_name = data_from_message_as_dict.get("file_name")
         uuid = data_from_message_as_dict.get("uuid")
 
         send_file_from_file_name(uuid, file_name)
-        delete_file_from_file_name(file_name)
+        file_system_adapter.delete_file_bytes_from_file_name(file_name)
 
         inference_results = data_from_message_as_dict["inference_results"]
 

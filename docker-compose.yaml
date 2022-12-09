@@ -10,7 +10,6 @@ services:
     container_name: icarus-edge-detector
     devices:
       - /dev/video0:/dev/video0
-    runtime: nvidia
     privileged: true
     volumes:
       - ${PWD}/dev/assets:/home/docker_user/assets
@@ -30,7 +29,6 @@ services:
       - ./dev/certs/root_ca.crt:/home/docker_user/certs/root_ca.crt:ro
     entrypoint: 
       - /home/docker_user/scripts/start.dev.sh
-      - ${INFERENCE_MODEL}
     depends_on:
       - icarus-edge-redis
     restart: always

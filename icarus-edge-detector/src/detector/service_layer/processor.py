@@ -17,7 +17,7 @@ class Processor:
         timestamp = datetime.datetime.now()
         return {
             "timestamp": timestamp.isoformat(),
-            "uuid": timestamp.strftime("%Y-%m-%d-%H-%M-%S-%f")
+            "uuid": timestamp.strftime("%Y-%m-%d-%H-%M-%S-%f"),
         }
 
     def handle_image(self, image):
@@ -37,5 +37,5 @@ class Processor:
         self._handlers.store_image_on_file_system(
             dict(meta_data=meta_data, image=image)
         )
-        
+
         self._handlers.send_stored_image_on_file_system_event_to_bus(detection_results)

@@ -19,3 +19,4 @@ COPY scripts ${HOME}/scripts
 RUN chmod +x ${HOME}/scripts/*.sh
 
 COPY src ${HOME}/src
+
