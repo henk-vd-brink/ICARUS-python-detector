@@ -27,7 +27,11 @@ redis_client = bootstrap_dict["redis_mq_client"]
 def send_file_from_file_name(uuid, file_name):
     file_bytes = file_system_adapter.get_file_bytes_from_file_name(file_name)
 
-    _, buffer = cv2.imencode(".jpg", file_bytes)
+    try:
+        _, buffer = cv2.imencode(".jpg", file_bytes)
+    except Exception as e:
+        logger.warning(e)
+        return 599
 
     image_as_jpg_bytes = io.BytesIO(buffer)
 
