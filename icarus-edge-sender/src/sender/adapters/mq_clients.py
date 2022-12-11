@@ -36,7 +36,7 @@ class RedisMqClient(MqClient):
 
     def connect(self):
         self.connection = redis.StrictRedis(
-            "icarus-edge-redis", 6379, charset="utf-8", decode_responses=True
+            host="icarus-edge-redis", port=6379, charset="utf-8", decode_responses=True
         )
 
     def publish(self, topic, body):
