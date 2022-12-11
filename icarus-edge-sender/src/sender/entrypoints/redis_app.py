@@ -47,6 +47,8 @@ def send_file_from_file_name(uuid, file_name):
 
 
 def redis_consumer():
+    redis_client.connect()
+
     while True:
 
         if redis_client.connection.llen("test") == 0:
