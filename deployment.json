@@ -1,6 +1,6 @@
 {
     "priority": 100,
-    "targetCondition": "deviceId='jetsonnano0'",
+    "targetCondition": "tags.environment = 'dev'",
     "content": {
         "modulesContent": {
             "$edgeAgent": {
