@@ -56,15 +56,16 @@ def redis_consumer():
         if redis_client.connection.llen("test") == 0:
             continue
 
-        data_from_message_as_dict = json.loads(redis_client.connection.rpop("test"))
+        message_as_json = redis_client.connection.rpop("test")
+        message_as_dict = json.loads(message_as_json)
 
-        file_name = data_from_message_as_dict.get("file_name")
-        uuid = data_from_message_as_dict.get("uuid")
+        file_name = message_as_dict.get("file_name")
+        uuid = message_as_dict.get("uuid")
 
         send_file_from_file_name(uuid, file_name)
         file_system_adapter.delete_file_bytes_from_file_name(file_name)
 
-        inference_results = data_from_message_as_dict["inference_results"]
+        inference_results = message_as_dict["inference_results"]
 
         message = dict(image_uuid=uuid, meta_data=[])
         for inference_result in inference_results:
