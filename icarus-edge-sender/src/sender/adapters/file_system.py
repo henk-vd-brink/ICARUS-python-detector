@@ -1,4 +1,5 @@
 import pathlib
+import numpy as np
 
 
 class FileSystem:
@@ -13,6 +14,11 @@ class FileSystem:
         with open(self._file_system_path + "/" + file_name, "rb") as file:
             file_bytes = file.read()
         return file_bytes
+
+    def get_numpy_array_from_file_name(self, file_name: str):
+        with open(self._file_system_path + "/" + file_name, "rb") as file:
+            numpy_array = np.load(file)
+        return numpy_array
 
     def delete_file_bytes_from_file_name(self, file_name: str):
         pathlib.Path(self._file_system_path + "/" + file_name).unlink()

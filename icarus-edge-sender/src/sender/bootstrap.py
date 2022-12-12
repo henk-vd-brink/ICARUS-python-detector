@@ -1,7 +1,12 @@
-import redis
+import logging
+import warnings
 
 from . import config
 from .adapters import mq_clients, file_system, senders
+
+warnings.filterwarnings(action="ignore", message="Unverified HTTPS request")
+
+logging.basicConfig(level="INFO")
 
 
 def bootstrap(
