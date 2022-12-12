@@ -47,6 +47,17 @@
                         },
                         "icarus-edge-detector": {
                             "restartPolicy": "always",
+                            "env": {
+                                "VIDEO_OUTPUT_HEIGHT": {
+                                    "value": "2160"
+                                },
+                                "VIDEO_OUTPUT_WIDTH": {
+                                    "value": "3840"
+                                },
+                                "VIDEO_OUTPUT_FRAMERATE": {
+                                    "value": "10"
+                                }
+                            },
                             "settings": {
                                 "image": "cricarusprod001.azurecr.io/icarus-edge-detector:{{BUILD_VERSION}}",
                                 "createOptions": "{\"HostConfig\":{\"Privileged\":true,\"Binds\":[\"/home/jetson/repos/ICARUS-python-detector/dev/assets:/home/docker_user/assets\",\"/dev/shm:/dev/shm\"],\"shmSize\":500000},\"Entrypoint\":[\"/home/docker_user/scripts/start.dev.sh\",\"yolov5n\"]}"
