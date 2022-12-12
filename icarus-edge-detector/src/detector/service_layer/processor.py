@@ -27,7 +27,7 @@ class Processor:
 
         detections = self._handlers.detect(batch)
 
-        detections = list(filter(lambda x: x.get("label") == "person", detections))
+        # detections = list(filter(lambda x: x.get("label") == "person", detections))
 
         if not detections:
             return
