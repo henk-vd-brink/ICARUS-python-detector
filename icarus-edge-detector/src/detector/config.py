@@ -7,9 +7,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_desired_video_configuration():
-    video_height = int(os.environ.get("VIDEO_OUTPUT_HEIGHT", 2160))
-    video_width = int(os.environ.get("VIDEO_OUTPUT_WIDTH", 3840))
-    video_framerate = int(os.environ.get("VIDEO_OUTPUT_FRAMERATE", 10))
+    video_height = int(os.environ.get("VIDEO_OUTPUT_HEIGHT", 1080))
+    video_width = int(os.environ.get("VIDEO_OUTPUT_WIDTH", 1920))
+    video_framerate = int(os.environ.get("VIDEO_OUTPUT_FRAMERATE", 30))
 
     detector_image_height = int(os.environ.get("DETECTOR_IMAGE_HEIGHT", 640))
     detector_image_width = int(os.environ.get("DETECTOR_IMAGE_WIDTH", 640))
@@ -30,7 +30,7 @@ def get_video_capture_config():
     height, width, framerate, *_ = get_desired_video_configuration()
 
     input_caps = (
-        "v4l2src device=/dev/video0 io-mode=2 "
+        "v4l2src device=/dev/video0 "
         f"! image/jpeg,height={height},width={width},framerate={framerate}/1 "
         "! jpegparse "
         "! nvv4l2decoder mjpeg=1 "
