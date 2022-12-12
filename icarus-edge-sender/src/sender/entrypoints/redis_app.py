@@ -4,6 +4,7 @@ import io
 import logging
 import warnings
 import cv2
+import numpy as np
 
 warnings.filterwarnings(action="ignore", message="Unverified HTTPS request")
 
@@ -23,9 +24,10 @@ redis_client = bootstrap_dict["redis_mq_client"]
 
 def send_file_from_file_name(uuid, file_name):
     file_bytes = file_system_adapter.get_file_bytes_from_file_name(file_name)
+    numpy_array_as_file_bytes = np.load(file_bytes)
 
     try:
-        _, buffer = cv2.imencode(".jpg", file_bytes)
+        _, buffer = cv2.imencode(".jpg", numpy_array_as_file_bytes)
     except Exception as e:
         logger.warning(e)
         return 599
