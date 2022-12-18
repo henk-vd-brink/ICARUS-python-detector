@@ -1,17 +1,13 @@
-import cv2
 import datetime
-import time
 import logging
-
-from dataclasses import field, dataclass, asdict
-
-logger = logging.getLogger(__name__)
 
 
 class Processor:
     def __init__(self, handlers, config={}):
         self._handlers = handlers
         self._config = config
+
+        self._logger = logging.getLogger(__name__)
 
     def _get_meta_data(self):
         timestamp = datetime.datetime.now()

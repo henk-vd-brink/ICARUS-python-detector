@@ -23,7 +23,7 @@ class FileSystemSaver(AbstractSaver):
         if not os.path.exists(self._base_path):
             os.mkdir(self._base_path)
 
-    def save_image(self, image_uuid, image, encoding):
+    def save_image(self, image_uuid, image, encoding="npy"):
         try:
             if encoding == "npy":
                 self._save_image_as_npy(image_uuid, image)

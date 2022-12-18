@@ -17,4 +17,4 @@ az iot edge deployment create \
     -n ${AZ_IOTHUB_NAME} \
     --content ${AZ_TMP_DEPLOYMENT_FILE_PATH} \
     --priority 100 \
-    --target-condition "tags.environment='dev'"
+    --target-condition "tags.environment = 'dev' AND tags.deployment-group = 'edge-datacollection'"
