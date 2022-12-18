@@ -18,4 +18,4 @@ COPY tests ${HOME}/tests
 
 RUN pip3 install -e src/
 
-COPY assets/ ${HOME}/assets/
+COPY assets ${HOME}/assets

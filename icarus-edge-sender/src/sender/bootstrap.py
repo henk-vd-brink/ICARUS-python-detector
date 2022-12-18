@@ -6,8 +6,6 @@ from .adapters import mq_clients, file_system, senders
 
 warnings.filterwarnings(action="ignore", message="Unverified HTTPS request")
 
-logging.basicConfig(level="INFO")
-
 
 def bootstrap(
     mq_client=mq_clients.RabbitMqClient(config.get_rabbit_mq_client_configuration()),

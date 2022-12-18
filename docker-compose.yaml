@@ -31,5 +31,12 @@ services:
       - /home/docker_user/scripts/start.dev.sh
     depends_on:
       - icarus-edge-redis
+    environment:
+      - REMOTE_IP_ADDRESS=${REMOTE_IP_ADDRESS}
+      - REMOTE_PORT=${REMOTE_PORT}
+      - REMOTE_RABBITMQ_PORT=${REMOTE_RABBITMQ_PORT}
+      - REMOTE_RABBITMQ_USERNAME=${REMOTE_RABBITMQ_USERNAME}
+      - REMOTE_RABBITMQ_PASSWORD=${REMOTE_RABBITMQ_PASSWORD}
+      - REDIS_IP_ADDRESS=${REDIS_IP_ADDRESS}
     restart: always
 

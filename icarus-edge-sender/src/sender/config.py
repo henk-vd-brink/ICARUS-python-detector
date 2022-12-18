@@ -1,7 +1,11 @@
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 def get_rabbit_mq_client_configuration():
+    logging.info(os.environ)
     return dict(
         broker_ip_address=os.environ.get("REMOTE_IP_ADDRESS"),
         broker_port=os.environ.get("REMOTE_RABBITMQ_PORT"),

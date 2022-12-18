@@ -16,7 +16,7 @@ def load_config_from_config_ini_as_dict(
     config = configparser.ConfigParser()
     config.read(path)
 
-    config_section = "deployement.{}".format(environment)
+    config_section = "deployment.{}".format(environment)
 
     return dict(
         REMOTE_IP_ADDRESS=config[config_section]["remote_ip_address"],
