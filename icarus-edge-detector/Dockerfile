@@ -17,3 +17,5 @@ COPY src ${HOME}/src
 COPY tests ${HOME}/tests
 
 RUN pip3 install -e src/
+
+COPY assets/ ${HOME}/assets/

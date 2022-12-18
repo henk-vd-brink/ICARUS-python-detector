@@ -70,6 +70,26 @@
                                 "image": "cricarusprod001.azurecr.io/icarus-edge-sender:{{BUILD_VERSION}}",
                                 "createOptions": "{\"HostConfig\":{\"Binds\":[\"/dev/shm:/dev/shm\"],\"shmSize\":500000},\"Entrypoint\":[\"/home/docker_user/scripts/start.dev.sh\"]}"
                             },
+                            "env": {
+                                "REMOTE_IP_ADDRESS": {
+                                    "value": "{{REMOTE_IP_ADDRESS}}"
+                                },
+                                "REMOTE_PORT": {
+                                    "value": "{{REMOTE_PORT}}"
+                                },
+                                "REMOTE_RABBITMQ_PORT": {
+                                    "value": "{{REMOTE_RABBITMQ_PORT}}"
+                                },
+                                "REMOTE_RABBITMQ_USERNAME": {
+                                    "value": "{{REMOTE_RABBITMQ_USERNAME}}"
+                                },
+                                "REMOTE_RABBITMQ_PASSWORD": {
+                                    "value": "{{REMOTE_RABBITMQ_PASSWORD}}"
+                                },
+                                "REDIS_IP_ADDRESS": {
+                                    "value": "{{REDIS_IP_ADDRESS}}"
+                                }
+                            },
                             "status": "running",
                             "type": "docker"
                         }
