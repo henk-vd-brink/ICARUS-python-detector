@@ -59,7 +59,7 @@
                             },
                             "settings": {
                                 "image": "cricarusprod001.azurecr.io/icarus-edge-detector:{{BUILD_VERSION}}",
-                                "createOptions": "{\"HostConfig\":{\"Privileged\":true,\"Binds\":[\"/home/jetson/repos/ICARUS-python-detector/dev/assets:/home/docker_user/assets\",\"/dev/shm:/dev/shm\"],\"shmSize\":500000},\"Entrypoint\":[\"/home/docker_user/scripts/start.dev.sh\",\"yolov5n\"]}"
+                                "createOptions": "{\"HostConfig\":{\"Privileged\":true,\"Binds\":[\"/dev/shm:/dev/shm\"],\"shmSize\":500000},\"Entrypoint\":[\"/home/docker_user/scripts/start.dev.sh\",\"yolov5n\"]}"
                             },
                             "status": "running",
                             "type": "docker"
