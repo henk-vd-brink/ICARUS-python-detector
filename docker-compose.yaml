@@ -12,7 +12,6 @@ services:
       - /dev/video0:/dev/video0
     privileged: true
     volumes:
-      - ${PWD}/dev/assets:/home/docker_user/assets
       - /dev/shm:/dev/shm
     shm_size: '1gb'
     entrypoint: 
