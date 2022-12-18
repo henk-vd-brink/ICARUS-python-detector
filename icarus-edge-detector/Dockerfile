@@ -18,3 +18,7 @@ COPY tests ${HOME}/tests
 COPY assets ${HOME}/assets
 
 RUN pip3 install -e src/
+
+RUN chown -R docker_user:docker_user ${HOME}
+
+USER docker_user
