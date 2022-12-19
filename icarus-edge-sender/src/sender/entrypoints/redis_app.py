@@ -20,6 +20,9 @@ redis_client = bootstrap_dict["redis_mq_client"]
 def send_file_from_file_name(uuid, file_name):
     image_as_numpy_array = file_system_adapter.get_numpy_array_from_file_name(file_name)
 
+    if image_as_numpy_array is None:
+        return 599
+
     try:
         _, buffer = cv2.imencode(".jpg", image_as_numpy_array)
     except Exception as e:
