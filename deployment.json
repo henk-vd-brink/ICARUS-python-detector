@@ -48,13 +48,13 @@
                             "restartPolicy": "always",
                             "env": {
                                 "VIDEO_OUTPUT_HEIGHT": {
-                                    "value": "2160"
+                                    "value": "1080"
                                 },
                                 "VIDEO_OUTPUT_WIDTH": {
-                                    "value": "3840"
+                                    "value": "1920"
                                 },
                                 "VIDEO_OUTPUT_FRAMERATE": {
-                                    "value": "10"
+                                    "value": "30"
                                 }
                             },
                             "settings": {
