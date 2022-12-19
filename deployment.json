@@ -10,9 +10,9 @@
                         "settings": {
                             "registryCredentials": {
                                 "cricarusprod001": {
-                                    "address": "cricarusprod001.azurecr.io",
-                                    "password": "{{CRICARUSPROD001_ACCESS_TOKEN}}",
-                                    "username": "cricarusprod001"
+                                    "address": "{{CONTAINER_REGISTRY_URL}}",
+                                    "username": "{{CONTAINER_REGISTRY_USERNAME}}",
+                                    "password": "{{CONTAINER_REGISTRY_PASSWORD}}"
                                 }
                             }
                         }
