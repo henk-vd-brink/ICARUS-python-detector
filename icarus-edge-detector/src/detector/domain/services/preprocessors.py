@@ -11,11 +11,11 @@ class AbstractPreprocessor(abc.ABC):
     def __init__(self, config={}):
         self._config = config
 
-    def preprocess(self, data):
-        return self._preprocess(data)
+    def preprocess(self, image):
+        return self._preprocess(image)
 
     @abc.abstractmethod
-    def _preprocess(self, data):
+    def _preprocess(self, image):
         pass
 
 

@@ -4,3 +4,4 @@ numpy
 redis
 pytest
 numba
+pika

@@ -1,41 +1,19 @@
 version: "3.8"
 
 services:
-  icarus-edge-redis:
-    image: cricarusprod001.azurecr.io/icarus-edge-redis:${BUILD_VERSION:-latest}
-    container_name: icarus-edge-redis
-
-  icarus-edge-detector:
+  icarus-edge-detector-inference:
     image: cricarusprod001.azurecr.io/icarus-edge-detector:${BUILD_VERSION:-latest}
-    container_name: icarus-edge-detector
+    container_name: icarus-edge-detector-inference
     devices:
       - /dev/video0:/dev/video0
     privileged: true
-    volumes:
-      - /dev/shm:/dev/shm
-    shm_size: '1gb'
-    entrypoint: 
+    entrypoint:
       - /home/docker_user/scripts/start.dev.sh
-      - ${INFERENCE_MODEL}
-    depends_on:
-      - icarus-edge-redis
-
-  icarus-edge-sender:
-    image: cricarusprod001.azurecr.io/icarus-edge-sender:${BUILD_VERSION:-latest}
-    container_name: icarus-edge-sender
-    volumes:
-      - /dev/shm:/dev/shm
-      - ./dev/certs/root_ca.crt:/home/docker_user/certs/root_ca.crt:ro
-    entrypoint: 
-      - /home/docker_user/scripts/start.dev.sh
-    depends_on:
-      - icarus-edge-redis
     environment:
       - REMOTE_IP_ADDRESS=${REMOTE_IP_ADDRESS}
       - REMOTE_PORT=${REMOTE_PORT}
       - REMOTE_RABBITMQ_PORT=${REMOTE_RABBITMQ_PORT}
       - REMOTE_RABBITMQ_USERNAME=${REMOTE_RABBITMQ_USERNAME}
       - REMOTE_RABBITMQ_PASSWORD=${REMOTE_RABBITMQ_PASSWORD}
-      - REDIS_IP_ADDRESS=${REDIS_IP_ADDRESS}
     restart: always
 

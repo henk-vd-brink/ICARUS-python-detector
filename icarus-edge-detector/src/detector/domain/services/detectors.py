@@ -8,8 +8,6 @@ from .nms import multiclass_nms
 
 logger = logging.getLogger(__name__)
 
-from ...utils import timer
-
 
 class AbstractDetector(abc.ABC):
     @abc.abstractmethod
@@ -18,25 +16,35 @@ class AbstractDetector(abc.ABC):
 
 
 class YoloV5Detector(AbstractDetector):
-    def __init__(self, config={}):
+    def __init__(
+        self,
+        ratio,
+        confidence,
+        labels,
+        engine_path,
+        max_batch_size=1,
+        dtype=np.float16,
+        image_size=(640, 640),
+        n_classes=80,
+    ):
 
-        self._ratio = config.get("ratio")
-        self._confidence = config.get("confidence")
-        self._labels = config.get("labels")
+        self._ratio = ratio
+        self._confidence = confidence
+        self._labels = labels
 
         self.logger = trt.Logger()
 
-        self.max_batch_size = config.get("max_batch_size", 1)
-        self.dtype = config.get("dtype", np.float16)
-        self.image_size = config.get("image_size", (320, 320))
-        self.n_classes = config.get("n_classes", 80)
+        self.max_batch_size = max_batch_size
+        self.dtype = dtype
+        self.image_size = image_size
+        self.n_classes = n_classes
+
+        engine_path = engine_path
 
         self.trt_runtime = trt.Runtime(self.logger)
         self.cfx = cuda.Device(0).make_context()
 
-        self.engine = self._load_engine_from_path(
-            self.trt_runtime, config.get("engine_path")
-        )
+        self.engine = self._load_engine_from_path(self.trt_runtime, engine_path)
 
         self.context = self.engine.create_execution_context()
 
@@ -45,6 +53,17 @@ class YoloV5Detector(AbstractDetector):
         self._check_initialation()
 
         self._warmup()
+
+    @classmethod
+    def from_dict(cls, input_dict):
+        ratio = input_dict.get("ratio")
+        confidence = input_dict.get("confidence")
+        labels = input_dict.get("labels")
+
+        engine_path = input_dict.get("engine_path")
+        return cls(
+            ratio=ratio, confidence=confidence, labels=labels, engine_path=engine_path
+        )
 
     def _load_engine_from_path(self, trt_runtime, engine_path):
         trt.init_libnvinfer_plugins(self.logger, "")
@@ -114,7 +133,6 @@ class YoloV5Detector(AbstractDetector):
             print(e)
             return []
 
-    @timer
     def detect(self, image):
 
         self.cfx.push()

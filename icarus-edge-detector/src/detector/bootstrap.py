@@ -1,16 +1,9 @@
 import inspect
-import queue
-import logging
 
 from . import config
-from .adapters import video_capture as vc, savers, mq_clients
-from .service_layer import handlers, processor
+from .adapters import video_capture as vc, mq_clients as mc, file_senders as fs
+from .service_layer import handlers, flow
 from .domain.services import preprocessors, detectors
-
-
-logging.basicConfig(level=logging.DEBUG)
-
-logger = logging.getLogger(__name__)
 
 
 def inject_dependencies(function, dependencies):
@@ -35,28 +28,23 @@ def inject_dependencies_into_handlers(handler_module, dependencies):
 
 def bootstrap(
     preprocessor=preprocessors.YoloV5Preprocessor(),
-    detector=detectors.YoloV5Detector(config.get_yolo_v5_detector_config()),
-    video_capture=vc.VideoCapture(config.get_video_capture_config()),
-    file_saver=savers.FileSystemSaver(),
-    mq_client=mq_clients.RedisClient(config.get_mq_config()),
+    detector=detectors.YoloV5Detector.from_dict(config.get_yolo_v5_detector_config()),
+    video_capture=vc.VideoCapture.from_dict(config.get_video_capture_config()),
+    rabbitmq_client=mc.RabbitMqClient.from_dict(config.get_rabbitmq_client_config()),
+    file_sender=fs.HttpsFileSender.from_dict(config.get_file_sender_config()),
+    connect_to_rabbit_mq_broker=True,
 ):
 
-    mq_client.connect()
-
-    logger.info(
-        "Initialised APP \n --- \n"
-        f"SELECTED preprocessor: {preprocessor}\n"
-        f"SELECTED detector: {detector}\n"
-        " ---"
-    )
+    if connect_to_rabbit_mq_broker:
+        rabbitmq_client.connect()
 
     dependencies = {
         "preprocessor": preprocessor,
         "detector": detector,
-        "file_saver": file_saver,
-        "mq_client": mq_client,
+        "rabbitmq_client": rabbitmq_client,
+        "file_sender": file_sender,
     }
 
     inject_dependencies_into_handlers(handlers, dependencies)
 
-    return processor.Processor(handlers=handlers), video_capture
+    return flow.Flow(handlers=handlers), video_capture

@@ -1,35 +1,62 @@
-import datetime
-import uuid
 import logging
+import json
+import cv2
+import io
+import asyncio
 
 logger = logging.getLogger(__name__)
 
 
-def preprocess_data(image, preprocessor):
-    return preprocessor.preprocess(image)
+def add_detections_to_frame(frame, preprocessor, detector):
+    batch = preprocessor.preprocess(frame.image)
+    detections = detector.detect(batch)
+
+    frame.detections = detections
 
 
-def detect(image, detector):
-    return detector.detect(image)
+def send_image_to_remote(frame, file_sender):
+    image_uuid = frame.uuid
+    image_as_numpy_array = frame.image
+
+    _, buffer = cv2.imencode(".jpg", image_as_numpy_array)
+    file_bytes = io.BytesIO(buffer)
+    file_name = image_uuid + ".jpg"
+
+    loop = asyncio.get_event_loop()
+    loop.run_in_executor(
+        None, file_sender.send, file_name, file_bytes
+    )  # Fire and forget
 
 
-def store_image_on_file_system(input_dict, file_saver) -> None:
-    image_uuid = input_dict["meta_data"].get("uuid")
-    image = input_dict["image"]
+def send_meta_data_to_remote(frame, rabbitmq_client):
+    uuid = frame.uuid
+    inference_results = frame.detections
 
-    file_saver.save_image(image_uuid, image, encoding="npy")
+    message_meta_data = list()
+    for inference_result in inference_results:
+        label = inference_result.get("label")
+        x_1, y_1, x_2, y_2 = inference_result.get("bounding_box")
+        confidence = inference_result.get("confidence")
 
-
-def send_stored_image_on_file_system_event_to_bus(input_dict, mq_client) -> None:
-    uuid = input_dict["meta_data"].get("uuid")
-    timestamp = input_dict["meta_data"].get("timestamp")
-    inference_results = input_dict["detections"]
+        message_meta_data.append(
+            dict(
+                label=label,
+                x_1=x_1,
+                y_1=y_1,
+                x_2=x_2,
+                y_2=y_2,
+                confidence=confidence,
+            )
+        )
 
     message = dict(
-        timestamp=timestamp,
-        uuid=uuid,
-        file_name=uuid + ".npy",
-        inference_results=inference_results,
+        image_uuid=uuid,
+        meta_data=message_meta_data,
     )
 
-    mq_client.publish("test", message)
+    if not rabbitmq_client.channel.is_open:
+        rabbitmq_client.connect()
+
+    rabbitmq_client.channel.basic_publish(
+        exchange="", routing_key="DetectedObjects", body=json.dumps(message)
+    )

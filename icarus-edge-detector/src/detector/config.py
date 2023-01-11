@@ -3,13 +3,14 @@ import os
 import logging
 import numpy as np
 
-logger = logging.getLogger(__name__)
+
+logging.basicConfig(level=logging.INFO)
 
 
 def get_desired_video_configuration():
-    video_height = int(os.environ.get("VIDEO_OUTPUT_HEIGHT", 1080))
-    video_width = int(os.environ.get("VIDEO_OUTPUT_WIDTH", 1920))
-    video_framerate = int(os.environ.get("VIDEO_OUTPUT_FRAMERATE", 30))
+    video_height = int(os.environ.get("VIDEO_OUTPUT_HEIGHT", 3496))
+    video_width = int(os.environ.get("VIDEO_OUTPUT_WIDTH", 4656))
+    video_framerate = int(os.environ.get("VIDEO_OUTPUT_FRAMERATE", 10))
 
     detector_image_height = int(os.environ.get("DETECTOR_IMAGE_HEIGHT", 640))
     detector_image_width = int(os.environ.get("DETECTOR_IMAGE_WIDTH", 640))
@@ -49,10 +50,6 @@ def get_labels_from_txt_file(file_path="/home/docker_user/assets/coco_labels.txt
     return [label.replace("\n", "") for label in labels]
 
 
-def get_mq_config():
-    return dict(host="icarus-edge-redis")
-
-
 def get_yolo_v5_detector_config():
     (
         _,
@@ -73,4 +70,21 @@ def get_yolo_v5_detector_config():
         ratio=ratio,
         labels=get_labels_from_txt_file(),
         nms_config=dict(nms_threshold=0.45, score_threshold=0.1),
+    )
+
+
+def get_rabbitmq_client_config():
+    return dict(
+        broker_ip_address=os.environ.get("REMOTE_IP_ADDRESS"),
+        broker_port=os.environ.get("REMOTE_RABBITMQ_PORT"),
+        broker_username=os.environ.get("REMOTE_RABBITMQ_USERNAME"),
+        broker_password=os.environ.get("REMOTE_RABBITMQ_PASSWORD"),
+    )
+
+
+def get_file_sender_config():
+    return dict(
+        remote_ip_address=os.environ.get("REMOTE_IP_ADDRESS"),
+        remote_port=os.environ.get("REMOTE_PORT"),
+        auth=None,
     )
