@@ -20,23 +20,28 @@ jobs:
       -
         name: Checkout 
         uses: actions/checkout@v3
+
       - 
         name: Extract branch name
         shell: bash
         run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF_NAME}-${GITHUB_SHA})"
         id: extract_branch
+
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@master
         with:
           platforms: linux/arm64
+
       - 
         name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@master
+
       - 
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+
       -
         name: Login to Azure Container Registry
         uses: docker/login-action@v2
@@ -44,6 +49,7 @@ jobs:
           registry: ${{ env.CONTAINER_REGISTRY_URL }}
           username: ${{ env.CONTAINER_REGISTRY_USERNAME }}
           password: ${{ env.CONTAINER_REGISTRY_PASSWORD }}
+
       -
         name: Build and Push icarus-edge-detector
         uses: docker/build-push-action@v3
@@ -53,32 +59,14 @@ jobs:
           file: Dockerfile
           push: true
           platforms: linux/arm64
-          tags: ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-detector:${{ steps.extract_branch.outputs.tag }}, ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-detector:latest
-      -
-        name: Build and Push icarus-edge-redis
-        uses: docker/build-push-action@v3
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: "{{defaultContext}}:icarus-edge-redis"
-          file: Dockerfile
-          push: true
-          platforms: linux/arm64
-          tags: ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-redis:${{ steps.extract_branch.outputs.tag }}, ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-redis:latest
-      -
-        name: Build and Push icarus-edge-sender
-        uses: docker/build-push-action@v3
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: "{{defaultContext}}:icarus-edge-sender"
-          file: Dockerfile
-          push: true
-          platforms: linux/arm64
-          tags: ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-sender:${{ steps.extract_branch.outputs.tag }}, ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-sender:latest
+          tags: ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-detector:${{ steps.extract_branch.outputs.tag }}
+
       -
         name: Az CLI login
         uses: azure/actions/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - 
         name: Azure CLI script
         uses: azure/CLI@v1

@@ -1,4 +1,6 @@
-FROM nvcr.io/nvidia/l4t-ml:r32.7.1-py3
+ARG BASE_IMAGE
+
+FROM ${BASE_IMAGE}
 
 ENV HOME=/home/docker_user
 
