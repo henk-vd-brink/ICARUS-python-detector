@@ -35,15 +35,6 @@
                         }
                     },
                     "modules": {
-                        "icarus-edge-redis": {
-                            "imagePullPolicy": "on-create",
-                            "restartPolicy": "always",
-                            "settings": {
-                                "image": "cricarusprod001.azurecr.io/icarus-edge-redis:{{BUILD_VERSION}}"
-                            },
-                            "status": "running",
-                            "type": "docker"
-                        },
                         "icarus-edge-detector": {
                             "restartPolicy": "always",
                             "env": {
@@ -60,35 +51,6 @@
                             "settings": {
                                 "image": "cricarusprod001.azurecr.io/icarus-edge-detector:{{BUILD_VERSION}}",
                                 "createOptions": "{\"HostConfig\":{\"Privileged\":true,\"Binds\":[\"/dev/shm:/dev/shm\"],\"shmSize\":500000},\"Entrypoint\":[\"/home/docker_user/scripts/start.dev.sh\",\"yolov5n\"]}"
-                            },
-                            "status": "running",
-                            "type": "docker"
-                        },
-                        "icarus-edge-sender": {
-                            "restartPolicy": "always",
-                            "settings": {
-                                "image": "cricarusprod001.azurecr.io/icarus-edge-sender:{{BUILD_VERSION}}",
-                                "createOptions": "{\"HostConfig\":{\"Binds\":[\"/dev/shm:/dev/shm\"],\"shmSize\":500000},\"Entrypoint\":[\"/home/docker_user/scripts/start.dev.sh\"]}"
-                            },
-                            "env": {
-                                "REMOTE_IP_ADDRESS": {
-                                    "value": "{{REMOTE_IP_ADDRESS}}"
-                                },
-                                "REMOTE_PORT": {
-                                    "value": "{{REMOTE_PORT}}"
-                                },
-                                "REMOTE_RABBITMQ_PORT": {
-                                    "value": "{{REMOTE_RABBITMQ_PORT}}"
-                                },
-                                "REMOTE_RABBITMQ_USERNAME": {
-                                    "value": "{{REMOTE_RABBITMQ_USERNAME}}"
-                                },
-                                "REMOTE_RABBITMQ_PASSWORD": {
-                                    "value": "{{REMOTE_RABBITMQ_PASSWORD}}"
-                                },
-                                "REDIS_IP_ADDRESS": {
-                                    "value": "{{REDIS_IP_ADDRESS}}"
-                                }
                             },
                             "status": "running",
                             "type": "docker"
