@@ -1,18 +1,18 @@
-import abc
 import redis
 import pika
 import ssl
+from abc import ABC, abstractmethod
 
 
-class AbstractMqClient(abc.ABC):
+class AbstractMqClient(ABC):
     def connect(self):
         self._connect()
 
-    @abc.abstractmethod
+    @abstractmethod
     def _connect(self):
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def _disconnect(self):
         pass
 

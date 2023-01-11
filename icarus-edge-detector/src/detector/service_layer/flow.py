@@ -18,8 +18,10 @@ class Flow:
 
         self._handlers.add_detections_to_frame(frame)
 
-        person_detected = list(filter(lambda x: x.get("label") == "person", frame.detections))
-        
+        person_detected = list(
+            filter(lambda x: x.get("label") == "person", frame.detections)
+        )
+
         if not person_detected:
             logger.info("DETECTION: No person detected")
             return

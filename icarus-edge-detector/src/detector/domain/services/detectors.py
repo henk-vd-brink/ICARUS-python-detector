@@ -1,16 +1,16 @@
-import abc
 import logging
 import numpy as np
 import tensorrt as trt
 import pycuda.driver as cuda
+from abc import ABC, abstractmethod
 
 from .nms import multiclass_nms
 
 logger = logging.getLogger(__name__)
 
 
-class AbstractDetector(abc.ABC):
-    @abc.abstractmethod
+class AbstractDetector(ABC):
+    @abstractmethod
     def detect(self, image):
         pass
 
@@ -50,7 +50,7 @@ class YoloV5Detector(AbstractDetector):
 
         self.inputs, self.outputs, self.bindings, self.stream = self._allocate_buffers()
 
-        self._check_initialation()
+        self._check_initialization()
 
         self._warmup()
 
@@ -73,7 +73,7 @@ class YoloV5Detector(AbstractDetector):
 
         return trt_runtime.deserialize_cuda_engine(engine_data)
 
-    def _check_initialation(self):
+    def _check_initialization(self):
         if len(self.inputs) < 0:
             raise Exception("Error inputs TensorRT")
 
@@ -167,9 +167,6 @@ class YoloV5Detector(AbstractDetector):
             "confidence": x[4],
         }
         return list(map(get_reformatted_detections, detections))
-
-    def __repr__(self):
-        return "< YoloV5Detector >"
 
     def __del__(self):
         self.cfx.pop()

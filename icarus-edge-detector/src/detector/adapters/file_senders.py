@@ -1,15 +1,15 @@
-import abc
 import logging
 import requests
 import warnings
+from abc import ABC, abstractmethod
 
 logger = logging.getLogger(__name__)
 
 warnings.filterwarnings(action="ignore", message="Unverified HTTPS request")
 
 
-class FileSender:
-    @abc.abstractmethod
+class FileSender(ABC):
+    @abstractmethod
     def send(self, file_name, file_bytes):
         pass
 
