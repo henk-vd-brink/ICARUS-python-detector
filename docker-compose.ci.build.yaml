@@ -6,15 +6,3 @@ services:
       context: icarus-edge-detector
       dockerfile: Dockerfile
     image: cricarusprod001.azurecr.io/icarus-edge-detector:${BUILD_VERSION:-latest}
-
-  icarus-edge-sender:
-    build:
-      context: icarus-edge-sender
-      dockerfile: Dockerfile
-    image: cricarusprod001.azurecr.io/icarus-edge-sender:${BUILD_VERSION:-latest}
-
-  icarus-edge-redis:
-    build:
-      context: icarus-edge-redis
-      dockerfile: Dockerfile
-    image: cricarusprod001.azurecr.io/icarus-edge-redis:${BUILD_VERSION:-latest}
