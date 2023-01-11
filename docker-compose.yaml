@@ -6,7 +6,6 @@ services:
     container_name: icarus-edge-detector-inference
     devices:
       - /dev/video0:/dev/video0
-    privileged: true
     entrypoint:
       - /home/docker_user/scripts/start.dev.sh
     environment:
