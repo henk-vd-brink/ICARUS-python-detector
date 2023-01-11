@@ -10,9 +10,9 @@ jobs:
   build:
     environment: icarus
     env: 
-      CRICARUSPROD001_USERNAME: ${{ secrets.CRICARUSPROD001_USERNAME }}
-      CRICARUSPROD001_ACCESS_TOKEN: ${{ secrets.CRICARUSPROD001_ACCESS_TOKEN }}
-      CRICARUSPROD001_URL: ${{ secrets.CRICARUSPROD001_URL }}
+      CONTAINER_REGISTRY_USERNAME: ${{ secrets.CRICARUSPROD001_USERNAME }}
+      CONTAINER_REGISTRY_PASSWORD: ${{ secrets.CRICARUSPROD001_ACCESS_TOKEN }}
+      CONTAINER_REGISTRY_URL: ${{ secrets.CRICARUSPROD001_URL }}
       
     runs-on: ubuntu-latest
 
@@ -41,9 +41,9 @@ jobs:
         name: Login to Azure Container Registry
         uses: docker/login-action@v2
         with:
-          registry: cricarusprod001.azurecr.io
-          username: ${{ env.CRICARUSPROD001_USERNAME }}
-          password: ${{ env.CRICARUSPROD001_ACCESS_TOKEN }}
+          registry: ${{ env.CONTAINER_REGISTRY_URL }}
+          username: ${{ env.CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ env.CONTAINER_REGISTRY_PASSWORD }}
       -
         name: Build and Push icarus-edge-detector
         uses: docker/build-push-action@v3
@@ -53,7 +53,7 @@ jobs:
           file: Dockerfile
           push: true
           platforms: linux/arm64
-          tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-detector:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-detector:latest
+          tags: ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-detector:${{ steps.extract_branch.outputs.tag }}, ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-detector:latest
       -
         name: Build and Push icarus-edge-redis
         uses: docker/build-push-action@v3
@@ -63,7 +63,7 @@ jobs:
           file: Dockerfile
           push: true
           platforms: linux/arm64
-          tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-redis:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-redis:latest
+          tags: ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-redis:${{ steps.extract_branch.outputs.tag }}, ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-redis:latest
       -
         name: Build and Push icarus-edge-sender
         uses: docker/build-push-action@v3
@@ -73,7 +73,7 @@ jobs:
           file: Dockerfile
           push: true
           platforms: linux/arm64
-          tags: ${{ env.CRICARUSPROD001_URL }}/icarus-edge-sender:${{ steps.extract_branch.outputs.tag }}, ${{ env.CRICARUSPROD001_URL }}/icarus-edge-sender:latest
+          tags: ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-sender:${{ steps.extract_branch.outputs.tag }}, ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-sender:latest
       -
         name: Az CLI login
         uses: azure/actions/login@v1
