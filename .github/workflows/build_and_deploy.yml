@@ -61,18 +61,3 @@ jobs:
           push: true
           platforms: linux/arm64
           tags: ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-detector:${{ steps.extract_branch.outputs.tag }}
-
-      -
-        name: Az CLI login
-        uses: azure/actions/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      - 
-        name: Azure CLI script
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.30.0
-          inlineScript: |
-            chmod +x $GITHUB_WORKSPACE/scripts/deploy_to_azure_iotedge.sh
-            $GITHUB_WORKSPACE/scripts/deploy_to_azure_iotedge.sh ${{ steps.extract_branch.outputs.tag }} dev-${{ steps.extract_branch.outputs.tag }}
