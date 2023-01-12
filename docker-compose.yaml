@@ -1,18 +1,18 @@
 version: "3.8"
 
 services:
-  icarus-edge-detector-inference:
-    image: cricarusprod001.azurecr.io/icarus-edge-detector:${BUILD_VERSION:-latest}
-    container_name: icarus-edge-detector-inference
+  icarus-edge-detector:
+    image: ${CONTAINER_REGISTRY}/icarus-edge-detector:${BUILD_VERSION:-latest}
+    container_name: icarus-edge-detector
     devices:
       - /dev/video0:/dev/video0
     entrypoint:
       - /home/docker_user/scripts/start.dev.sh
     environment:
-      - REMOTE_IP_ADDRESS=${REMOTE_IP_ADDRESS:-192.168.178.47}
-      - REMOTE_PORT=${REMOTE_PORT:-8443}
-      - REMOTE_RABBITMQ_PORT=${REMOTE_RABBITMQ_PORT:-5672}
-      - REMOTE_RABBITMQ_USERNAME=${REMOTE_RABBITMQ_USERNAME:-guest}
-      - REMOTE_RABBITMQ_PASSWORD=${REMOTE_RABBITMQ_PASSWORD:-guest}
+      - REMOTE_IP_ADDRESS=${REMOTE_IP_ADDRESS}
+      - REMOTE_PORT=${REMOTE_PORT}
+      - REMOTE_RABBITMQ_PORT=${REMOTE_RABBITMQ_PORT}
+      - REMOTE_RABBITMQ_USERNAME=${REMOTE_RABBITMQ_USERNAME}
+      - REMOTE_RABBITMQ_PASSWORD=${REMOTE_RABBITMQ_PASSWORD}
     restart: always
 

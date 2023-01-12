@@ -6,5 +6,5 @@ services:
       context: icarus-edge-detector
       dockerfile: Dockerfile
       args:
-        - BASE_IMAGE=nvcr.io/nvidia/l4t-ml:r32.7.1-py3
-    image: cricarusprod001.azurecr.io/icarus-edge-detector:${BUILD_VERSION:-latest}
+        - BASE_IMAGE=${BASE_IMAGE}
+    image: ${CONTAINER_REGISTRY}/icarus-edge-detector:${BUILD_VERSION:-latest}
