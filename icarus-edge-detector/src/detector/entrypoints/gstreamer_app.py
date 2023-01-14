@@ -13,6 +13,7 @@ def main(video_capture):
         ret, image = video_capture.read()
 
         if not ret:
+            logger.warning("Could not capture image, exiting..")
             break
 
         flow.handle_image(image)

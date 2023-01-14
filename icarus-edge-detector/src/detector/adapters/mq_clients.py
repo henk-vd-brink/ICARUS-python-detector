@@ -1,36 +1,37 @@
 import redis
 import pika
 import ssl
+from typing import Dict, Any
 from abc import ABC, abstractmethod
 
 
 class AbstractMqClient(ABC):
-    def connect(self):
+    def connect(self) -> None:
         self._connect()
 
     @abstractmethod
-    def _connect(self):
+    def _connect(self) -> None:
         pass
 
     @abstractmethod
-    def _disconnect(self):
+    def _disconnect(self) -> None:
         pass
 
 
 class RedisClient(AbstractMqClient):
-    def __init__(self, host, port) -> None:
+    def __init__(self, host: str, port: int) -> None:
         self._host = host
         self._port = port
 
     @classmethod
-    def from_dict(cls, input_dict) -> AbstractMqClient:
+    def from_dict(cls, input_dict: Dict[str, Any]) -> AbstractMqClient:
         host = input_dict.get("host")
-        port = input_dict.get("port")
+        port = input_dict["port"]
         return cls(host=host, port=port)
 
     def _connect(self) -> None:
         self._connection = redis.StrictRedis(
-            host=self._config.get("host"),
+            host=self._host,
             port=6379,
             db=0,
             charset="utf-8",
@@ -40,17 +41,16 @@ class RedisClient(AbstractMqClient):
     def _disconnect(self) -> None:
         self._connection.close()
 
-    def __enter__(self) -> redis.StrictRedis:
-        self._connect()
-        return self._connection
-
-    def __exit__(self, *_) -> None:
-        self._disconnect()
-
 
 class RabbitMqClient(AbstractMqClient):
     def __init__(
-        self, host, port, username, password, path_to_root_ca_cert, host_cn
+        self,
+        host: str,
+        port: int,
+        username: str,
+        password: str,
+        path_to_root_ca_cert: str = None,
+        host_cn: str = None,
     ) -> None:
         self._host = host
         self._port = port
@@ -69,11 +69,11 @@ class RabbitMqClient(AbstractMqClient):
             self._ssl_options = pika.SSLOptions(context, self._host_cn)
 
     @classmethod
-    def from_dict(cls, input_dict) -> AbstractMqClient:
-        host = input_dict.get("broker_ip_address")
-        port = input_dict.get("broker_port")
-        username = input_dict.get("broker_username")
-        password = input_dict.get("broker_password")
+    def from_dict(cls, input_dict: Dict[str, Any]) -> AbstractMqClient:
+        host = input_dict["broker_ip_address"]
+        port = input_dict["broker_port"]
+        username = input_dict["broker_username"]
+        password = input_dict["broker_password"]
 
         path_to_root_ca_cert = input_dict.get("path_to_root_ca_cert")
         host_cn = input_dict.get("host_cn")
@@ -88,7 +88,7 @@ class RabbitMqClient(AbstractMqClient):
         )
 
     @property
-    def channel(self):
+    def channel(self) -> pika.channel.Channel:
         return self._channel
 
     def _connect(self) -> None:
