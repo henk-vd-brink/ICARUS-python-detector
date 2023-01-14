@@ -106,3 +106,12 @@ class RabbitMqClient(AbstractMqClient):
 
     def _disconnect(self) -> None:
         self._connection.close()
+
+    def __enter__(self) -> pika.channel.Channel:
+        if not self._channel.channel.is_open:
+            self._connect()
+
+        return self._channel
+
+    def __exit__(self, *_) -> None:
+        pass
