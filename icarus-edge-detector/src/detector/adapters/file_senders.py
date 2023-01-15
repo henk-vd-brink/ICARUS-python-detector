@@ -29,7 +29,8 @@ class HttpsFileSender(FileSender):
     def from_dict(cls, input_dict: Dict[str, Any]) -> FileSender:
         remote_ip_address = input_dict["remote_ip_address"]
         remote_port = input_dict["remote_port"]
-        auth = input_dict["auth"]
+
+        auth = input_dict.get("auth")
 
         return cls(remote_ip_address, remote_port, auth)
 

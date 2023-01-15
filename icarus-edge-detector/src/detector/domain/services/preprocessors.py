@@ -1,24 +1,22 @@
 import cv2
-import logging
 import numpy as np
 from abc import ABC, abstractmethod
 
 
-logger = logging.getLogger(__name__)
-
-
 class Preprocessor(ABC):
     @abstractmethod
-    def preprocess(self, image):
+    def preprocess(self, image: np.ndarray) -> np.ndarray:
         return self._preprocess(image)
 
 
 class YoloV5Preprocessor(Preprocessor):
-    def __init__(self, desired_image_width=640, desired_image_height=640):
+    def __init__(
+        self, desired_image_width: int = 640, desired_image_height: int = 640
+    ) -> None:
         self._desired_image_width = desired_image_width
         self._desired_image_height = desired_image_height
 
-    def preprocess(self, image):
+    def preprocess(self, image: np.ndarray) -> np.ndarray:
         new_image_resolution = (self._desired_image_width, self._desired_image_height)
 
         image = cv2.resize(

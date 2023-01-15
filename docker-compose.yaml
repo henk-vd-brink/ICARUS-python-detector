@@ -6,13 +6,15 @@ services:
     container_name: icarus-edge-detector
     devices:
       - /dev/video0:/dev/video0
-    entrypoint:
-      - /home/docker_user/scripts/start.dev.sh
+    volumes:
+      - assets:/home/docker_user/assets:ro
     environment:
       - REMOTE_IP_ADDRESS=${REMOTE_IP_ADDRESS}
       - REMOTE_PORT=${REMOTE_PORT}
       - REMOTE_RABBITMQ_PORT=${REMOTE_RABBITMQ_PORT}
       - REMOTE_RABBITMQ_USERNAME=${REMOTE_RABBITMQ_USERNAME}
       - REMOTE_RABBITMQ_PASSWORD=${REMOTE_RABBITMQ_PASSWORD}
+    entrypoint:
+      - /home/docker_user/scripts/start.dev.sh
     restart: always
 

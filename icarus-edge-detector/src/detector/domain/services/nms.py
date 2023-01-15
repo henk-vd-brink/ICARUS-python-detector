@@ -3,7 +3,7 @@ import numpy as np
 
 
 @numba.njit
-def nms(boxes, scores, nms_thr):
+def nms(boxes: np.ndarray, scores: np.ndarray, nms_thr: float) -> np.ndarray:
     x1 = boxes[:, 0]
     y1 = boxes[:, 1]
     x2 = boxes[:, 2]
@@ -33,8 +33,9 @@ def nms(boxes, scores, nms_thr):
 
 
 @numba.jit
-def multiclass_nms(boxes, scores, nms_thr, score_thr):
-    """Multiclass NMS implemented in Numpy"""
+def multiclass_nms(
+    boxes: np.ndarray, scores: np.ndarray, nms_thr: float, score_thr: float
+) -> np.ndarray:
     final_dets = []
 
     for cls_ind in range(scores.shape[1]):
@@ -59,6 +60,6 @@ def multiclass_nms(boxes, scores, nms_thr, score_thr):
             final_dets.append(dets)
 
     if not final_dets:
-        return []
+        return np.array([])
 
     return np.concatenate(final_dets, 0)
