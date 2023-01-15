@@ -54,9 +54,11 @@ def send_meta_data_to_remote(frame, rabbitmq_client):
         meta_data=message_meta_data,
     )
 
-    with rabbitmq_client:
-        rabbitmq_client.basic_publish(
-            exchange="DetectedObjects",
-            routing_key="DetectedObjects",
-            body=json.dumps(message),
-        )
+    if not rabbitmq_client.channel.is_open:
+        rabbitmq_client.connect()
+
+    rabbitmq_client.channel.basic_publish(
+        exchange="DetectedObjects",
+        routing_key="DetectedObjects",
+        body=json.dumps(message),
+    )

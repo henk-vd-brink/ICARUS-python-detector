@@ -25,14 +25,14 @@ class RedisClient(AbstractMqClient):
 
     @classmethod
     def from_dict(cls, input_dict: Dict[str, Any]) -> AbstractMqClient:
-        host = input_dict.get("host")
+        host = input_dict["host"]
         port = input_dict["port"]
         return cls(host=host, port=port)
 
     def _connect(self) -> None:
         self._connection = redis.StrictRedis(
             host=self._host,
-            port=6379,
+            port=self._port,
             db=0,
             charset="utf-8",
             decode_responses=True,
@@ -52,21 +52,25 @@ class RabbitMqClient(AbstractMqClient):
         path_to_root_ca_cert: str = None,
         host_cn: str = None,
     ) -> None:
-        self._host = host
-        self._port = port
-        self._username = username
-        self._password = password
         self._path_to_root_ca_cert = path_to_root_ca_cert
         self._host_cn = host_cn
 
         self._ssl_options = None
 
         self._connection = None
-        self._channel = None
+
+        self.channel = None
 
         if self._path_to_root_ca_cert and self._host_cn:
             context = ssl.create_default_context(cafile=self._path_to_root_ca_cert)
             self._ssl_options = pika.SSLOptions(context, self._host_cn)
+
+        self._parameters = pika.ConnectionParameters(
+            host=host,
+            port=port,
+            credentials=pika.PlainCredentials(username, password),
+            ssl_options=self._ssl_options,
+        )
 
     @classmethod
     def from_dict(cls, input_dict: Dict[str, Any]) -> AbstractMqClient:
@@ -87,31 +91,9 @@ class RabbitMqClient(AbstractMqClient):
             host_cn=host_cn,
         )
 
-    @property
-    def channel(self) -> pika.channel.Channel:
-        return self._channel
-
     def _connect(self) -> None:
-        credentials = pika.PlainCredentials(self._username, self._password)
-
-        parameters = pika.ConnectionParameters(
-            host=self._host,
-            port=self._port,
-            credentials=credentials,
-            ssl_options=self._ssl_options,
-        )
-
-        self._connection = pika.BlockingConnection(parameters)
-        self._channel = self._connection.channel()
+        self._connection = pika.BlockingConnection(self._parameters)
+        self.channel = self._connection.channel()
 
     def _disconnect(self) -> None:
         self._connection.close()
-
-    def __enter__(self) -> pika.channel.Channel:
-        if not self._channel.channel.is_open:
-            self._connect()
-
-        return self._channel
-
-    def __exit__(self, *_) -> None:
-        pass
