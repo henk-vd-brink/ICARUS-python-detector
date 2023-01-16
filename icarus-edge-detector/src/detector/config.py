@@ -40,7 +40,7 @@ def get_yolo_v5_detector_config():
     labels = get_labels_from_txt_file("/home/docker_user/assets/coco_labels.txt")
 
     return dict(
-        engine_path="/home/docker_user/assets/yolov5n.trt",
+        engine_path="/home/docker_user/assets/yolov5n.821.trt",
         max_batch_size=1,
         dtype=np.float16,
         confidence=0.6,
