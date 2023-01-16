@@ -1,69 +1,50 @@
-#!/usr/bin/env bash
-# this script installs OpenCV from deb packages that it downloads
-# the opencv_version.sh script selects which packages to use
+#!/bin/bash
 
-set -e -x
-
-OPENCV_URL=$1
-OPENCV_DEB=$2
-
-echo "OPENCV_URL = $OPENCV_URL"
-echo "OPENCV_DEB = $OPENCV_DEB"
-
-ARCH=$(uname -i)
-echo "ARCH:  $ARCH"
-
-# remove previous OpenCV installation if it exists
-apt-get purge -y '*opencv*' || echo "previous OpenCV installation not found"
-
-# download and extract the deb packages
-mkdir opencv
-cd opencv
-wget --quiet --show-progress --progress=bar:force:noscroll --no-check-certificate ${OPENCV_URL} -O ${OPENCV_DEB}
-tar -xzvf ${OPENCV_DEB}
-
-# install the packages and their dependencies
-dpkg -i --force-depends *.deb
-apt-get update 
-apt-get install -y -f --no-install-recommends
-dpkg -i *.deb
-rm -rf /var/lib/apt/lists/*
-apt-get clean
-
-# remove the original downloads
-cd ../
-rm -rf opencv
-
-# manage some install paths
-PYTHON3_VERSION=`python3 -c 'import sys; version=sys.version_info[:3]; print("{0}.{1}".format(*version))'`
-
-if [ $ARCH = "aarch64" ]; then
-	local_include_path="/usr/local/include/opencv4"
-	local_python_path="/usr/local/lib/python${PYTHON3_VERSION}/dist-packages/cv2"
-
-	if [ -d "$local_include_path" ]; then
-		echo "$local_include_path already exists, replacing..."
-		rm -rf $local_include_path
-	fi
-	
-	if [ -d "$local_python_path" ]; then
-		echo "$local_python_path already exists, replacing..."
-		rm -rf $local_python_path
-	fi
-	
-	ln -s /usr/include/opencv4 $local_include_path
-	ln -s /usr/lib/python${PYTHON3_VERSION}/dist-packages/cv2 $local_python_path
-	
-elif [ $ARCH = "x86_64" ]; then
-	opencv_conda_path="/opt/conda/lib/python${PYTHON3_VERSION}/site-packages/cv2"
-	
-	if [ -d "$opencv_conda_path" ]; then
-		echo "$opencv_conda_path already exists, replacing..."
-		rm -rf $opencv_conda_path
-		ln -s /usr/lib/python${PYTHON3_VERSION}/site-packages/cv2 $opencv_conda_path
-	fi
-fi
-
-# test importing cv2
-echo "testing cv2 module under python..."
-python3 -c "import cv2; print('OpenCV version:', str(cv2.__version__)); print(cv2.getBuildInformation())"
+apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+	    gfortran \
+        cmake \
+        git \
+        file \
+        tar \
+        libatlas-base-dev \
+        libavcodec-dev \
+        libavformat-dev \
+        libavresample-dev \
+        libcanberra-gtk3-module \
+        libdc1394-22-dev \
+        libeigen3-dev \
+        libglew-dev \
+        libgstreamer-plugins-base1.0-dev \
+        libgstreamer-plugins-good1.0-dev \
+        libgstreamer1.0-dev \
+        libgtk-3-dev \
+        libjpeg-dev \
+        libjpeg8-dev \
+        libjpeg-turbo8-dev \
+        liblapack-dev \
+        liblapacke-dev \
+        libopenblas-dev \
+        libpng-dev \
+        libpostproc-dev \
+        libswscale-dev \
+        libtbb-dev \
+        libtbb2 \
+        libtesseract-dev \
+        libtiff-dev \
+        libv4l-dev \
+        libxine2-dev \
+        libxvidcore-dev \
+        libx264-dev \
+        libgtkglext1 \
+        libgtkglext1-dev \
+        pkg-config \
+        qv4l2 \
+        v4l-utils \
+        v4l2ucp \
+        zlib1g-dev \
+        curl \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean

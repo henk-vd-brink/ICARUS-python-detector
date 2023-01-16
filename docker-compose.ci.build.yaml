@@ -1,10 +1,19 @@
 version: "3.8"
 
 services:
+  icarus-edge-baseimage:
+    build:
+      context: docker
+      dockerfile: Dockerfile
+      args:
+        - BASE_IMAGE=nvcr.io/nvidia/l4t-tensorrt:r8.2.1-runtime
+        - OPENCV_VERSION=4.4.0
+    image: ${CONTAINER_REGISTRY}/icarus-edge-baseimage:${BUILD_VERSION:-latest}
+
   icarus-edge-detector:
     build:
       context: icarus-edge-detector
       dockerfile: Dockerfile
       args:
-        - BASE_IMAGE=${BASE_IMAGE}
+        - BASE_IMAGE=${CONTAINER_REGISTRY}/icarus-edge-baseimage:${BUILD_VERSION:-latest}
     image: ${CONTAINER_REGISTRY}/icarus-edge-detector:${BUILD_VERSION:-latest}
