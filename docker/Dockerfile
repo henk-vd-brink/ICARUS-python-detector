@@ -1,6 +1,6 @@
-ARG BASE_IMAGE
+ARG BASE_IMAGE=nvcr.io/nvidia/l4t-tensorrt:r8.2.1-runtime
 
-FROM ${BASE_IMAGE}
+FROM --platform=linux/arm64/v8 ${BASE_IMAGE}
 
 ENV HOME=/home/docker_user
 

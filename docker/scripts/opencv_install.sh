@@ -1,6 +1,7 @@
 #!/bin/bash
 
 OPENCV_VERSION=$1
+MAKE_FLAGS=-j$(nproc)
 
 cd /tmp
 
@@ -38,7 +39,7 @@ cmake  \
     -D BUILD_TESTS=OFF \
     .. \
 
-make -j4
+make ${MAKE_FLAGS}
 
 make install
 
