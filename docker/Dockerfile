@@ -2,14 +2,19 @@ ARG BASE_IMAGE=nvcr.io/nvidia/l4t-tensorrt:r8.2.1-runtime
 
 FROM --platform=linux/arm64/v8 ${BASE_IMAGE}
 
-ENV HOME=/home/docker_user
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CUDA_HOME="/usr/local/cuda"
+ENV PATH="/usr/local/cuda/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
 
-COPY scripts ${HOME}/scripts
+RUN pip3 install --no-cache-dir --verbose pycuda
+RUN pip3 install --no-cache-dir --verbose numba
 
-RUN chmod +x ${HOME}/scripts/*.sh
+COPY scripts /scripts
+RUN chmod +x /scripts/*.sh
 
 # Install OpenCV
 ARG OPENCV_VERSION=4.4.0
 
-RUN ${HOME}/scripts/opencv_install_deps.sh
-RUN ${HOME}/scripts/opencv_install.sh ${OPENCV_VERSION}
+RUN /scripts/opencv_install_deps.sh
+RUN /scripts/opencv_install.sh ${OPENCV_VERSION}
