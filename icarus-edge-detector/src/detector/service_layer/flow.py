@@ -26,9 +26,6 @@ class Flow:
 
         self._handlers.add_detections_to_frame(frame)
 
-        if not self._filter(frame):
-            return
-
         self._handlers.send_meta_data_to_remote(frame)
 
         self._handlers.send_image_to_remote(frame)
