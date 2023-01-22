@@ -9,6 +9,7 @@ ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
 
 # Install PyCuda and Numba
+RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --verbose pycuda
 RUN pip3 install --no-cache-dir --verbose numba
 
