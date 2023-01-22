@@ -13,7 +13,8 @@ jobs:
       CONTAINER_REGISTRY_USERNAME: ${{ secrets.CRICARUSPROD001_USERNAME }}
       CONTAINER_REGISTRY_PASSWORD: ${{ secrets.CRICARUSPROD001_ACCESS_TOKEN }}
       CONTAINER_REGISTRY_URL: ${{ secrets.CRICARUSPROD001_URL }}
-      
+      BASE_IMAGE: cricarusdev.azurecr.io/icarus-edge-baseimage:2023-01-22
+
     runs-on: ubuntu-latest
 
     steps:
@@ -52,8 +53,8 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: "{{defaultContext}}:icarus-edge-detector"
-          build-args: BASE_IMAGE=nvcr.io/nvidia/l4t-ml:r32.7.1-py3
-          file: Dockerfile
+          build-args: BASE_IMAGE=${{ BASE_IMAGE }}
+          file: Dockerfile.prod
           push: true
           platforms: linux/arm64
           tags: ${{ env.CONTAINER_REGISTRY_URL }}/icarus-edge-detector:${{ steps.extract_branch.outputs.tag }}
