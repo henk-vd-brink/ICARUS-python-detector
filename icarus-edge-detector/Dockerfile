@@ -12,13 +12,11 @@ ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
 RUN pip3 install --no-cache-dir --verbose pycuda
 RUN pip3 install --no-cache-dir --verbose numba
 
+# Install Source Code
 ENV HOME=/home/docker_user
 
 RUN useradd -m docker_user \
 	&& usermod -a -G video docker_user
-
-COPY requirements.txt ${HOME}/requirements.txt
-RUN pip3 install -r ${HOME}/requirements.txt
 
 COPY scripts ${HOME}/scripts
 RUN chmod +x ${HOME}/scripts/*.sh
@@ -26,10 +24,12 @@ RUN chmod +x ${HOME}/scripts/*.sh
 COPY src ${HOME}/src
 COPY tests ${HOME}/tests
 
+RUN chown -R docker_user ${HOME}
+
+USER docker_user
+
 WORKDIR ${HOME}
 
 RUN pip3 install -e src/
-
-RUN chown -R docker_user ${HOME}
 
 USER docker_user
