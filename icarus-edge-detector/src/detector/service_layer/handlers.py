@@ -4,6 +4,8 @@ import cv2
 import io
 import asyncio
 
+from ..domain import models
+
 logger = logging.getLogger(__name__)
 
 
@@ -29,30 +31,7 @@ def send_image_to_remote(frame, file_sender):
 
 
 def send_meta_data_to_remote(frame, rabbitmq_client):
-    uuid = frame.uuid
-    inference_results = frame.detections
-
-    message_meta_data = list()
-    for inference_result in inference_results:
-        label = inference_result.get("label")
-        x_1, y_1, x_2, y_2 = inference_result.get("bounding_box")
-        confidence = inference_result.get("confidence")
-
-        message_meta_data.append(
-            dict(
-                label=label,
-                x_1=x_1,
-                y_1=y_1,
-                x_2=x_2,
-                y_2=y_2,
-                confidence=confidence,
-            )
-        )
-
-    message = dict(
-        image_uuid=uuid,
-        meta_data=message_meta_data,
-    )
+    message = models.Message.from_frame(frame)
 
     if not rabbitmq_client.channel.is_open:
         rabbitmq_client.connect()
@@ -60,5 +39,5 @@ def send_meta_data_to_remote(frame, rabbitmq_client):
     rabbitmq_client.channel.basic_publish(
         exchange="DetectedObjects",
         routing_key="DetectedObjects",
-        body=json.dumps(message),
+        body=json.dumps(message.asdict()),
     )
