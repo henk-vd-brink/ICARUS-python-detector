@@ -3,7 +3,6 @@ import inspect
 from . import config
 from .adapters import video_capture as vc, mq_clients as mc, file_senders as fs
 from .service_layer import handlers, flow
-from .domain import filters
 from .domain.services import preprocessors, detectors
 
 
@@ -35,9 +34,6 @@ def bootstrap(
     file_sender=fs.HttpsFileSender.from_dict(config.get_file_sender_config()),
     connect_to_rabbit_mq_broker=True,
 ):
-    filter_pipeline = [
-        filters.PersonOrPottedPlantSelectionFilter(),
-    ]
 
     if connect_to_rabbit_mq_broker:
         rabbitmq_client.connect()
@@ -52,4 +48,4 @@ def bootstrap(
 
     inject_dependencies_into_handlers(handlers, dependencies)
 
-    return flow.Flow(handlers=handlers, filter_pipeline=filter_pipeline), video_capture
+    return flow.Flow(handlers=handlers), video_capture
