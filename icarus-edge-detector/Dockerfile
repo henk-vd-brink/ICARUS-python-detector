@@ -8,13 +8,6 @@ ENV CUDA_HOME="/usr/local/cuda"
 ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
 
-# Install Apt dependencies
-RUN apt-get update \
-	&& apt-get install -y \
-		python3.8-dev \
-	&& rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
-
 # Install PyCuda and Numba
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --verbose pycuda

@@ -18,26 +18,6 @@ class Frame:
 
 
 @dataclass
-class Message:
-    uuid: str
-    timestamp: str
-    meta_data: list = field(default_factory=lambda: [])
-
-    @classmethod
-    def from_frame(cls, frame):
-        meta_data = list()
-        for detection in frame.detections:
-            meta_data.append(MessageMetaData.from_detection(detection))
-
-        return cls(
-            uuid=frame.uuid, timestamp=frame.timestamp.isoformat(), meta_data=meta_data
-        )
-
-    def asdict(self):
-        return asdict(self)
-
-
-@dataclass
 class MessageMetaData:
     label: str
     x_1: int
@@ -56,3 +36,23 @@ class MessageMetaData:
             y_2=detection.get("bounding_box")[3],
             confidence=detection.get("confidence"),
         )
+
+
+@dataclass
+class Message:
+    uuid: str
+    timestamp: str
+    meta_data: list = field(default_factory=lambda: [])
+
+    @classmethod
+    def from_frame(cls, frame):
+        meta_data = list()
+        for detection in frame.detections:
+            meta_data.append(MessageMetaData.from_detection(detection))
+
+        return cls(
+            uuid=frame.uuid, timestamp=frame.timestamp.isoformat(), meta_data=meta_data
+        )
+
+    def asdict(self):
+        return asdict(self)
