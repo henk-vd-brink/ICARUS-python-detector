@@ -53,7 +53,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: "{{defaultContext}}:icarus-edge-detector"
-          build-args: BASE_IMAGE=${{ BASE_IMAGE }}
+          build-args: BASE_IMAGE=${{ env.BASE_IMAGE }}
           file: Dockerfile.prod
           push: true
           platforms: linux/arm64
