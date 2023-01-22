@@ -6,7 +6,6 @@ MAKE_FLAGS=-j$(nproc)
 cd /tmp
 
 git clone --depth 1 --branch ${OPENCV_VERSION} https://github.com/opencv/opencv.git
-git clone --depth 1 --branch ${OPENCV_VERSION} https://github.com/opencv/opencv_contrib.git
 
 mkdir /tmp/opencv/build
 cd /tmp/opencv/build
@@ -17,7 +16,6 @@ cmake  \
     -D BUILD_opencv_python2=OFF \
     -D BUILD_opencv_python3=ON \
     -D PYTHON_DEFAULT_EXECUTABLE=$(which python3) \
-    -D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv_contrib/modules \
     -D PYTHON3_PACKAGES_PATH=/usr/lib/python3/dist-packages \
     -D BUILD_opencv_java=OFF \
     -D CMAKE_BUILD_TYPE=RELEASE \
