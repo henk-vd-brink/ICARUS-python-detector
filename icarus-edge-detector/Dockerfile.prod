@@ -1,6 +1,6 @@
 ARG BASE_IMAGE
 
-FROM ${BASE_IMAGE} as builder
+FROM --platform=linux/arm64/v8 ${BASE_IMAGE} as builder
 
 # set environment variables
 ENV HOME=/home/docker_user
