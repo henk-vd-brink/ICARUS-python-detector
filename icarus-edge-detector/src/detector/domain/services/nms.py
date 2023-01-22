@@ -1,8 +1,8 @@
-import numba
+# import numba
 import numpy as np
 
 
-@numba.njit
+# @numba.njit
 def nms(boxes: np.ndarray, scores: np.ndarray, nms_thr: float) -> np.ndarray:
     x1 = boxes[:, 0]
     y1 = boxes[:, 1]
@@ -32,7 +32,7 @@ def nms(boxes: np.ndarray, scores: np.ndarray, nms_thr: float) -> np.ndarray:
     return np.array(keep, dtype=np.int8)
 
 
-@numba.jit
+# @numba.jit
 def multiclass_nms(
     boxes: np.ndarray, scores: np.ndarray, nms_thr: float, score_thr: float
 ) -> np.ndarray:

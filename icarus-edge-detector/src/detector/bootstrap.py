@@ -27,20 +27,22 @@ def inject_dependencies_into_handlers(handler_module, dependencies):
 
 
 def bootstrap(
-    preprocessor=preprocessors.YoloV5Preprocessor(),
-    detector=detectors.YoloV5Detector.from_dict(config.get_yolo_v5_detector_config()),
     video_capture=vc.VideoCapture.from_dict(config.get_video_capture_config()),
     rabbitmq_client=mc.RabbitMqClient.from_dict(config.get_rabbitmq_client_config()),
     file_sender=fs.HttpsFileSender.from_dict(config.get_file_sender_config()),
     connect_to_rabbit_mq_broker=True,
 ):
 
+    detector_config = config.get_yolo_v5_detector_config()
+    detector_config["preprocessor"] = preprocessors.YoloV5Preprocessor()
+
+    detector = detectors.YoloV5Detector.from_dict(detector_config)
+
     if connect_to_rabbit_mq_broker:
         rabbitmq_client.connect()
         rabbitmq_client.channel.exchange_declare("DetectedObjects")
 
     dependencies = {
-        "preprocessor": preprocessor,
         "detector": detector,
         "rabbitmq_client": rabbitmq_client,
         "file_sender": file_sender,

@@ -13,7 +13,7 @@ services:
   icarus-edge-detector:
     build:
       context: icarus-edge-detector
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.${BUILD_ENVIRONMENT}
       args:
-        - BASE_IMAGE=${CONTAINER_REGISTRY}/icarus-edge-baseimage:${BUILD_VERSION:-latest}
+        - BASE_IMAGE=${CONTAINER_REGISTRY}/icarus-edge-baseimage:${BASEIMAGE_BUILD_VERSION:-latest}
     image: ${CONTAINER_REGISTRY}/icarus-edge-detector:${BUILD_VERSION:-latest}

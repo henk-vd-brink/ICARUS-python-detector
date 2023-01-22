@@ -2,35 +2,40 @@ ARG BASE_IMAGE
 
 FROM ${BASE_IMAGE}
 
-# Set environment variables
+# set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CUDA_HOME="/usr/local/cuda"
 ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
 
-# Install PyCuda and Numba
+ENV HOME=/home/docker_user
+
+# install PyCuda and Numba
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --verbose pycuda
 RUN pip3 install --no-cache-dir --verbose numba
 
-# Install Source Code
-ENV HOME=/home/docker_user
-
+# create user
 RUN useradd -m docker_user \
 	&& usermod -a -G video docker_user
 
+# install pip dependencies
+COPY requirements.txt ${HOME}/requirements.txt
+RUN pip3 install -r ${HOME}/requirements.txt
+
+# copy scripts
 COPY scripts ${HOME}/scripts
 RUN chmod +x ${HOME}/scripts/*.sh
 
+# copy source code and tests
 COPY src ${HOME}/src
 COPY tests ${HOME}/tests
 
+# change permissions Home Folder
 RUN chown -R docker_user ${HOME}
 
-USER docker_user
-
+# set /home/docker_user as work directory
 WORKDIR ${HOME}
 
-RUN pip3 install -e src/
-
+# change root user to docker_user
 USER docker_user

@@ -1,0 +1,54 @@
+ARG BASE_IMAGE
+
+FROM ${BASE_IMAGE} as builder
+
+# set environment variables
+ENV HOME=/home/docker_user
+
+# install pip dependencies
+COPY requirements.txt ${HOME}/requirements.txt
+RUN pip3 wheel --no-cache-dir --no-deps --wheel-dir ${HOME}/wheels -r ${HOME}/requirements.txt
+
+# copy code
+COPY scripts ${HOME}/scripts
+COPY src ${HOME}/src
+
+
+FROM ${BASE_IMAGE}
+
+# set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CUDA_HOME="/usr/local/cuda"
+ENV PATH="/usr/local/cuda/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
+
+ENV HOME=/home/docker_user
+
+# install PyCuda and Numba
+RUN pip3 install --upgrade pip
+RUN pip3 install --no-cache-dir --verbose pycuda
+RUN pip3 install --no-cache-dir --verbose numba
+
+# create user
+RUN useradd -m docker_user \
+	&& usermod -a -G video docker_user
+
+# copy code from building stage
+COPY --from=builder ${HOME}/wheels ${HOME}/wheels
+COPY --from=builder ${HOME}/src ${HOME}/src
+COPY --from=builder ${HOME}/scripts ${HOME}/scripts
+
+# Set correct permissions
+RUN chmod +x ${HOME}/scripts/*.sh
+
+# change permissions Home Folder
+RUN chown -R docker_user ${HOME}
+
+# install pip dependencies
+RUN pip3 install --no-cache ${HOME}/wheels/*
+
+# set /home/docker_user as work directory
+WORKDIR ${HOME}
+
+# change root user to docker_user
+USER docker_user

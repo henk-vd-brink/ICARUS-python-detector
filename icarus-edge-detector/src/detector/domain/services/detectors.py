@@ -22,6 +22,7 @@ class YoloV5Detector(AbstractDetector):
         confidence,
         labels,
         engine_path,
+        preprocessor,
         max_batch_size=1,
         dtype=np.float16,
         image_size=(640, 640),
@@ -31,6 +32,8 @@ class YoloV5Detector(AbstractDetector):
         self._ratio = ratio
         self._confidence = confidence
         self._labels = labels
+
+        self._preprocessor = preprocessor
 
         self.logger = trt.Logger()
 
@@ -60,9 +63,15 @@ class YoloV5Detector(AbstractDetector):
         confidence = input_dict.get("confidence")
         labels = input_dict.get("labels")
 
+        preprocessor = input_dict["preprocessor"]
+
         engine_path = input_dict.get("engine_path")
         return cls(
-            ratio=ratio, confidence=confidence, labels=labels, engine_path=engine_path
+            ratio=ratio,
+            confidence=confidence,
+            labels=labels,
+            engine_path=engine_path,
+            preprocessor=preprocessor,
         )
 
     def _load_engine_from_path(self, trt_runtime, engine_path):
@@ -135,8 +144,10 @@ class YoloV5Detector(AbstractDetector):
 
     def detect(self, image):
 
+        batch = self._preprocessor(image)
+
         self.cfx.push()
-        inference_results = self.inference(image)
+        inference_results = self.inference(batch)
         self.cfx.pop()
 
         if not inference_results:

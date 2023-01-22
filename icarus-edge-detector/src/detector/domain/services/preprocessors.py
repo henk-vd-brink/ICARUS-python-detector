@@ -5,8 +5,8 @@ from abc import ABC, abstractmethod
 
 class Preprocessor(ABC):
     @abstractmethod
-    def preprocess(self, image: np.ndarray) -> np.ndarray:
-        return self._preprocess(image)
+    def __call__(self, image: np.ndarray) -> np.ndarray:
+        pass
 
 
 class YoloV5Preprocessor(Preprocessor):
@@ -16,7 +16,7 @@ class YoloV5Preprocessor(Preprocessor):
         self._desired_image_width = desired_image_width
         self._desired_image_height = desired_image_height
 
-    def preprocess(self, image: np.ndarray) -> np.ndarray:
+    def __call__(self, image: np.ndarray) -> np.ndarray:
         new_image_resolution = (self._desired_image_width, self._desired_image_height)
 
         image = cv2.resize(
@@ -26,3 +26,5 @@ class YoloV5Preprocessor(Preprocessor):
         image /= 255.0
         image = np.moveaxis(image, -1, 0)
         return image[np.newaxis]
+
+    

@@ -9,10 +9,8 @@ from ..domain import models
 logger = logging.getLogger(__name__)
 
 
-def add_detections_to_frame(frame, preprocessor, detector):
-    batch = preprocessor.preprocess(frame.image)
-    detections = detector.detect(batch)
-
+def run_inference(frame, detector):
+    detections = detector.detect(frame.image)
     frame.detections = detections
 
 

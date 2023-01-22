@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export BUILD_ENVIRONMENT=$1
+
 docker-compose \
     --file docker-compose.ci.build.yaml \
     --env-file .env.example \
