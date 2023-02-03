@@ -16,7 +16,7 @@ services:
       - REMOTE_META_DATA_SENDER_PORT=${REMOTE_META_DATA_SENDER_PORT}
       - REMOTE_META_DATA_SENDER_USERNAME=${REMOTE_META_DATA_SENDER_USERNAME}
       - REMOTE_META_DATA_SENDER_PASSWORD=${REMOTE_META_DATA_SENDER_PASSWORD}
-      - META_DATA_SENDER=iot_edge
+      - META_DATA_SENDER=rabbitmq
     entrypoint:
       - /home/docker_user/scripts/start.dev.sh
     restart: always

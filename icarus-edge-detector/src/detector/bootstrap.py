@@ -34,7 +34,7 @@ def bootstrap(
 
     meta_data_sender_config = config.get_meta_data_sender_config()
 
-    meta_data_sender = (selected_meta_data_sender.from_dict(meta_data_sender_config),)
+    meta_data_sender = selected_meta_data_sender.from_dict(meta_data_sender_config)
 
     detector_config = config.get_yolo_v5_detector_config()
     detector_config["preprocessor"] = preprocessors.YoloV5Preprocessor()
