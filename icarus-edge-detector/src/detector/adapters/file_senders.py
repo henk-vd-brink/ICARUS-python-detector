@@ -22,7 +22,7 @@ class HttpsFileSender(FileSender):
         self._auth = auth
 
         self._remote_url = (
-            f"https://{self._remote_ip_address}:{self._remote_port}/files"
+            f"https://{self._remote_ip_address}:{self._remote_port}/uploaded_images"
         )
 
     @classmethod

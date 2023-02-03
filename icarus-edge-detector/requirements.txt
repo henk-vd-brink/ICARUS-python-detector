@@ -2,3 +2,4 @@ redis
 pytest
 pika
 requests
+azure-iot-device~=2.5.0

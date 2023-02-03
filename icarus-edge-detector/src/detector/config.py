@@ -6,20 +6,20 @@ import numpy as np
 
 logging.basicConfig(level=logging.INFO)
 
-VIDEO_HEIGHT = int(os.environ.get("VIDEO_OUTPUT_HEIGHT", 3496))
-VIDEO_WIDTH = int(os.environ.get("VIDEO_OUTPUT_WIDTH", 4656))
-VIDEO_FRAMERATE = int(os.environ.get("VIDEO_OUTPUT_FRAMERATE", 10))
+VIDEO_HEIGHT = int(os.environ.get("VIDEO_OUTPUT_HEIGHT", 2464))
+VIDEO_WIDTH = int(os.environ.get("VIDEO_OUTPUT_WIDTH", 3264))
+VIDEO_FRAMERATE = int(os.environ.get("VIDEO_OUTPUT_FRAMERATE", 21))
 
 DETECTOR_IMAGE_HEIGHT = int(os.environ.get("DETECTOR_IMAGE_HEIGHT", 640))
 DETECTOR_IMAGE_WIDTH = int(os.environ.get("DETECTOR_IMAGE_WIDTH", 640))
 
+META_DATA_SENDER = os.environ.get("META_DATA_SENDER")
+
 
 def get_video_capture_config():
     input_caps = (
-        "v4l2src device=/dev/video0 "
-        f"! image/jpeg,height={VIDEO_HEIGHT},width={VIDEO_WIDTH},framerate={VIDEO_FRAMERATE}/1 "
-        "! jpegparse "
-        "! nvv4l2decoder mjpeg=1 "
+        "nvarguscamerasrc "
+        f"! video/x-raw(memory:NVMM), height=(int){VIDEO_HEIGHT}, width=(int){VIDEO_WIDTH}, framerate=(fraction){VIDEO_FRAMERATE}/1 "
         "! nvvidconv "
         "! video/x-raw,format=BGRx "
         "! videoconvert "
@@ -43,7 +43,7 @@ def get_yolo_v5_detector_config():
         engine_path="/home/docker_user/assets/yolov5n.821.trt",
         max_batch_size=1,
         dtype=np.float16,
-        confidence=0.6,
+        confidence=0.3,
         image_size=(DETECTOR_IMAGE_WIDTH, DETECTOR_IMAGE_HEIGHT),
         n_classes=len(labels),
         ratio=ratio,
@@ -52,12 +52,12 @@ def get_yolo_v5_detector_config():
     )
 
 
-def get_rabbitmq_client_config():
+def get_meta_data_sender_config():
     return dict(
-        broker_ip_address=os.environ.get("REMOTE_IP_ADDRESS"),
-        broker_port=os.environ.get("REMOTE_RABBITMQ_PORT"),
-        broker_username=os.environ.get("REMOTE_RABBITMQ_USERNAME"),
-        broker_password=os.environ.get("REMOTE_RABBITMQ_PASSWORD"),
+        host=os.environ.get("REMOTE_IP_ADDRESS"),
+        port=os.environ.get("REMOTE_META_DATA_SENDER_PORT"),
+        username=os.environ.get("REMOTE_META_DATA_SENDER_USERNAME"),
+        password=os.environ.get("REMOTE_META_DATA_SENDER_PASSWORD"),
     )
 
 

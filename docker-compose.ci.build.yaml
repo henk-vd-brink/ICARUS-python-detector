@@ -8,12 +8,12 @@ services:
       args:
         - BASE_IMAGE=nvcr.io/nvidia/l4t-tensorrt:r8.2.1-runtime
         - OPENCV_VERSION=4.4.0
-    image: ${CONTAINER_REGISTRY}/icarus-edge-baseimage:${BUILD_VERSION:-latest}
+    image: cricarusdev.azurecr.io/icarus-edge-baseimage
 
   icarus-edge-detector:
     build:
       context: icarus-edge-detector
       dockerfile: Dockerfile.${BUILD_ENVIRONMENT}
       args:
-        - BASE_IMAGE=${CONTAINER_REGISTRY}/icarus-edge-baseimage:${BASEIMAGE_BUILD_VERSION:-latest}
-    image: ${CONTAINER_REGISTRY}/icarus-edge-detector:${BUILD_VERSION:-latest}
+        - BASE_IMAGE=cricarusdev.azurecr.io/icarus-edge-baseimage:2023-01-22
+    image: cricarusdev.azurecr.io/icarus-edge-detector

@@ -26,5 +26,3 @@ class YoloV5Preprocessor(Preprocessor):
         image /= 255.0
         image = np.moveaxis(image, -1, 0)
         return image[np.newaxis]
-
-    

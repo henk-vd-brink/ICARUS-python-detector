@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export BUILD_ENVIRONMENT=$1
+export BUILD_ENVIRONMENT=dev
 
 docker-compose \
     --file docker-compose.ci.build.yaml \

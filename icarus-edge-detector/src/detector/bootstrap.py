@@ -1,7 +1,7 @@
 import inspect
-
+import logging
 from . import config
-from .adapters import video_capture as vc, mq_clients as mc, file_senders as fs
+from .adapters import video_capture as vc, meta_data_senders as mds, file_senders as fs
 from .service_layer import handlers, flow
 from .domain.services import preprocessors, detectors
 
@@ -28,23 +28,22 @@ def inject_dependencies_into_handlers(handler_module, dependencies):
 
 def bootstrap(
     video_capture=vc.VideoCapture.from_dict(config.get_video_capture_config()),
-    rabbitmq_client=mc.RabbitMqClient.from_dict(config.get_rabbitmq_client_config()),
     file_sender=fs.HttpsFileSender.from_dict(config.get_file_sender_config()),
-    connect_to_rabbit_mq_broker=True,
 ):
+    selected_meta_data_sender = mds.SWITCHER.get(config.META_DATA_SENDER)
+
+    meta_data_sender_config = config.get_meta_data_sender_config()
+
+    meta_data_sender = (selected_meta_data_sender.from_dict(meta_data_sender_config),)
 
     detector_config = config.get_yolo_v5_detector_config()
     detector_config["preprocessor"] = preprocessors.YoloV5Preprocessor()
 
     detector = detectors.YoloV5Detector.from_dict(detector_config)
 
-    if connect_to_rabbit_mq_broker:
-        rabbitmq_client.connect()
-        rabbitmq_client.channel.exchange_declare("DetectedObjects")
-
     dependencies = {
         "detector": detector,
-        "rabbitmq_client": rabbitmq_client,
+        "meta_data_sender": meta_data_sender,
         "file_sender": file_sender,
     }
 

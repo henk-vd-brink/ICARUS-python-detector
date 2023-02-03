@@ -28,14 +28,11 @@ def send_image_to_remote(frame, file_sender):
     )  # Fire and forget
 
 
-def send_meta_data_to_remote(frame, rabbitmq_client):
+def send_meta_data_to_remote(frame, meta_data_sender):
     message = models.Message.from_frame(frame)
 
-    if not rabbitmq_client.channel.is_open:
-        rabbitmq_client.connect()
+    message_as_json = json.dumps(message.asdict())
 
-    rabbitmq_client.channel.basic_publish(
-        exchange="DetectedObjects",
-        routing_key="DetectedObjects",
-        body=json.dumps(message.asdict()),
-    )
+    meta_data_sender.send_meta_data(message_as_json)
+
+    logger.info(message_as_json)

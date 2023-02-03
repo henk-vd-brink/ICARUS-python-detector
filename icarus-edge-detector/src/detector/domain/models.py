@@ -40,7 +40,7 @@ class MessageMetaData:
 
 @dataclass
 class Message:
-    uuid: str
+    image_uuid: str
     timestamp: str
     meta_data: list = field(default_factory=lambda: [])
 
@@ -51,7 +51,9 @@ class Message:
             meta_data.append(MessageMetaData.from_detection(detection))
 
         return cls(
-            uuid=frame.uuid, timestamp=frame.timestamp.isoformat(), meta_data=meta_data
+            image_uuid=frame.uuid,
+            timestamp=frame.timestamp.isoformat(),
+            meta_data=meta_data,
         )
 
     def asdict(self):

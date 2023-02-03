@@ -1,5 +1,5 @@
 # General
-build_and_run_dev:
+build_and_run:
 	./scripts/build_and_run.sh dev
 
 # Build base image on amd64
