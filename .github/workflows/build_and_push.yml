@@ -13,7 +13,7 @@ jobs:
       CONTAINER_REGISTRY_USERNAME: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
       CONTAINER_REGISTRY_PASSWORD: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
       CONTAINER_REGISTRY_URL: ${{ secrets.CONTAINER_REGISTRY_URL }}
-      BASE_IMAGE: ${CONTAINER_REGISTRY_URL}/icarus-edge-baseimage:2023-01-22
+      BASE_IMAGE: ${{ secrets.CONTAINER_REGISTRY_URL }}/icarus-edge-baseimage:2023-01-22
 
     runs-on: ubuntu-latest
 
