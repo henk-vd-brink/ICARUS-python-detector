@@ -64,6 +64,6 @@ def get_meta_data_sender_config():
 def get_file_sender_config():
     return dict(
         remote_ip_address=os.environ.get("REMOTE_IP_ADDRESS"),
-        remote_port=os.environ.get("REMOTE_PORT"),
+        remote_port=os.environ.get("REMOTE_FILE_SENDER_PORT"),
         auth=None,
     )
