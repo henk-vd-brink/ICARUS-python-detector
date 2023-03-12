@@ -15,6 +15,8 @@ DETECTOR_IMAGE_WIDTH = int(os.environ.get("DETECTOR_IMAGE_WIDTH", 640))
 
 META_DATA_SENDER = os.environ.get("META_DATA_SENDER")
 
+DETECTOR_CONFIDENCE=float(os.environ.get("DETECTOR_CONFIDENCE", "0.7"))
+
 
 def get_video_capture_config():
     input_caps = (
@@ -43,7 +45,7 @@ def get_yolo_v5_detector_config():
         engine_path="/home/docker_user/assets/yolov5n.821.trt",
         max_batch_size=1,
         dtype=np.float16,
-        confidence=0.3,
+        confidence=DETECTOR_CONFIDENCE,
         image_size=(DETECTOR_IMAGE_WIDTH, DETECTOR_IMAGE_HEIGHT),
         n_classes=len(labels),
         ratio=ratio,
