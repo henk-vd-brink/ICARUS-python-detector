@@ -12,13 +12,18 @@ class Flow:
 
     def _create_frame_from_image(self, image) -> models.Frame:
         return models.Frame.from_image(image)
-
+    
     def handle_image(self, image) -> None:
         frame = self._create_frame_from_image(image)
 
         self._handlers.run_inference(frame)
 
         if not frame.detections:
+            return
+        
+        detected_labels = set([f["label"] for f in frame.detections])
+        
+        if not {"person", "car", "bus"}.intersection(detected_labels):
             return
 
         self._handlers.send_meta_data_to_remote(frame)
