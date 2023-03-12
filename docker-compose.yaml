@@ -5,7 +5,7 @@ services:
     image: cricarusdev.azurecr.io/icarus-edge-detector
     container_name: icarus-edge-detector
     volumes:
-      - ./assets:/home/docker_user/assets:ro
+      - .icarus-edge-detector/assets:/home/docker_user/assets:ro
       - /tmp/argus_socket:/tmp/argus_socket
     environment:
       - VIDEO_OUTPUT_HEIGHT=2464
