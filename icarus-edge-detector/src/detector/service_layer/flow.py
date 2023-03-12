@@ -18,9 +18,11 @@ class Flow:
 
         self._handlers.run_inference(frame)
         
-        frame.detections = filter(
-            lambda x: x["label"] in ["person", "car", "bus"], 
-            frame.detections
+        frame.detections = list(
+            filter(
+                lambda x: x["label"] in ["person", "car", "bus"], 
+                frame.detections
+            )
         )
 
         if not frame.detections:
