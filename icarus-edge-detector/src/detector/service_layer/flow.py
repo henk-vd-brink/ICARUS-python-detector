@@ -17,13 +17,13 @@ class Flow:
         frame = self._create_frame_from_image(image)
 
         self._handlers.run_inference(frame)
+        
+        frame.detections = filter(
+            lambda x: x["label"] in ["person", "car", "bus"], 
+            frame.detections
+        )
 
         if not frame.detections:
-            return
-        
-        detected_labels = set([f["label"] for f in frame.detections])
-        
-        if not {"person", "car", "bus"}.intersection(detected_labels):
             return
 
         self._handlers.send_meta_data_to_remote(frame)
