@@ -12,6 +12,7 @@ RUN pip3 wheel --no-cache-dir --no-deps --wheel-dir ${HOME}/wheels -r ${HOME}/re
 # Copy code
 COPY scripts ${HOME}/scripts
 COPY src ${HOME}/src
+COPY assets ${HOME}/assets
 
 
 FROM ${BASE_IMAGE}
@@ -37,6 +38,7 @@ RUN useradd -m docker_user \
 COPY --from=builder ${HOME}/wheels ${HOME}/wheels
 COPY --from=builder ${HOME}/src ${HOME}/src
 COPY --from=builder ${HOME}/scripts ${HOME}/scripts
+COPY --from=builder ${HOME}/assets ${HOME}/assets
 
 # Set correct permissions
 RUN chmod +x ${HOME}/scripts/*.sh
