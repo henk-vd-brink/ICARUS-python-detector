@@ -18,6 +18,8 @@ FILE_SENDER = os.environ.get("FILE_SENDER")
 
 DETECTOR_CONFIDENCE = float(os.environ.get("DETECTOR_CONFIDENCE", "0.7"))
 
+DEVICE_ID = os.environ.get("IOTEDGE_DEVICEID", "UNKNOWN_DEVICE_ID")
+
 
 def get_video_capture_config():
     input_caps = (

@@ -2,6 +2,8 @@ import numpy as np
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 
+from ... import config
+
 
 @dataclass
 class Frame:
@@ -13,7 +15,8 @@ class Frame:
     @classmethod
     def from_image(cls, image):
         timestamp = datetime.now()
-        image_uuid = timestamp.strftime("%Y-%m-%d-%H-%M-%S-%f")
+        timestamp_as_string = timestamp.strftime("%Y-%m-%d-%H-%M-%S-%f")
+        image_uuid = f"{config.DEVICE_ID}-{timestamp_as_string}"
         return cls(image=image, uuid=image_uuid, timestamp=timestamp)
 
 
