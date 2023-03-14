@@ -40,6 +40,8 @@ def bootstrap(
 
     meta_data_sender = selected_meta_data_sender.from_dict(meta_data_sender_config)
 
+    file_sender = selected_file_sender.from_dict(**config.get_file_sender_config())
+
     # Prepare detector
     detector_config = config.get_yolo_v5_detector_config()
     detector_config["preprocessor"] = preprocessors.YoloV5Preprocessor()
@@ -49,7 +51,7 @@ def bootstrap(
     dependencies = {
         "detector": detector,
         "meta_data_sender": meta_data_sender,
-        "file_sender": selected_file_sender,
+        "file_sender": file_sender,
     }
 
     inject_dependencies_into_handlers(handlers, dependencies)
