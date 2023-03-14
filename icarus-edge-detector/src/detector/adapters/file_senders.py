@@ -53,7 +53,11 @@ class AzureBlobSender(FileSender):
         self._remote_port = remote_port
         self._account_key = account_key
 
-        self._connection_string = f"DefaultEndpointsProtocol=http;BlobEndpoint=http://{remote_ip_address}:{remote_port}/icaruslocaldev1;AccountName=icaruslocaldev1;AccountKey={account_key}"
+        self._connection_string = (
+            f"DefaultEndpointsProtocol=http;"
+            f"BlobEndpoint=http://{remote_ip_address}:{remote_port}/icaruslocaldev1;"
+            f"AccountName=icaruslocaldev1;AccountKey={account_key}"
+        )
 
         self._blob_client = BlobServiceClient.from_connection_string(
             self._connection_string, "icaruslocaldev1"

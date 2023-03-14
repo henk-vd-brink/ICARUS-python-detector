@@ -22,7 +22,10 @@ DETECTOR_CONFIDENCE = float(os.environ.get("DETECTOR_CONFIDENCE", "0.7"))
 def get_video_capture_config():
     input_caps = (
         "nvarguscamerasrc "
-        f"! video/x-raw(memory:NVMM), height=(int){VIDEO_HEIGHT}, width=(int){VIDEO_WIDTH}, framerate=(fraction){VIDEO_FRAMERATE}/1 "  # noqa
+        f"! video/x-raw(memory:NVMM), "
+        f"height=(int){VIDEO_HEIGHT}, "
+        f"width=(int){VIDEO_WIDTH}, "
+        f"framerate=(fraction){VIDEO_FRAMERATE}/1 "
         "! nvvidconv "
         "! video/x-raw,format=BGRx "
         "! videoconvert "
