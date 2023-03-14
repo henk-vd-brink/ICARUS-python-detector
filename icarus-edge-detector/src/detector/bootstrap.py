@@ -40,7 +40,7 @@ def bootstrap(
 
     meta_data_sender = selected_meta_data_sender.from_dict(meta_data_sender_config)
 
-    file_sender = selected_file_sender.from_dict(**config.get_file_sender_config())
+    file_sender = selected_file_sender.from_dict(config.get_file_sender_config())
 
     # Prepare detector
     detector_config = config.get_yolo_v5_detector_config()
