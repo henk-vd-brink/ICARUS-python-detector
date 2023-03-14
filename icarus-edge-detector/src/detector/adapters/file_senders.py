@@ -59,11 +59,11 @@ class AzureBlobSender(FileSender):
             f"AccountName=icaruslocaldev1;AccountKey={account_key}"
         )
 
-        self._blob_client = BlobServiceClient.from_connection_string(
+        self._blob_service_client = BlobServiceClient.from_connection_string(
             self._connection_string, "icaruslocaldev1"
         )
 
-        self._container_client = self._blob_client.get_container_client(
+        self._container_client = self._blob_service_client.get_container_client(
             "icaruslocaldev1"
         )
 
@@ -80,7 +80,7 @@ class AzureBlobSender(FileSender):
 
     def send(self, file_name: str, file_bytes: bytes) -> None:
         blob_client = self._container_client.get_blob_client(file_name)
-        blob_client.uplade_blob(file_bytes, blob_type="BlockBlob")
+        blob_client.upload_blob(file_bytes, blob_type="BlockBlob", overwrite=True)
 
 
 SWITCHER = {"blob": AzureBlobSender, "https": HttpsFileSender}
