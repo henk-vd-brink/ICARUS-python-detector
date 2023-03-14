@@ -2,7 +2,7 @@ import numpy as np
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 
-from ... import config
+from .. import config
 
 
 @dataclass
