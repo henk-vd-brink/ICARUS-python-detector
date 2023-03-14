@@ -2,7 +2,8 @@ import logging
 import json
 import cv2
 import io
-import asyncio
+
+# import asyncio
 
 from ..domain import models
 
@@ -22,10 +23,12 @@ def send_image_to_remote(frame, file_sender):
     file_bytes = io.BytesIO(buffer)
     file_name = image_uuid + ".jpg"
 
-    loop = asyncio.get_event_loop()
-    loop.run_in_executor(
-        None, file_sender.send, file_name, file_bytes
-    )  # Fire and forget
+    file_sender.send(file_name, file_bytes)
+
+    # loop = asyncio.get_event_loop()
+    # loop.run_in_executor(
+    #     None, file_sender.send, file_name, file_bytes
+    # )  # Fire and forget
 
 
 def send_meta_data_to_remote(frame, meta_data_sender):

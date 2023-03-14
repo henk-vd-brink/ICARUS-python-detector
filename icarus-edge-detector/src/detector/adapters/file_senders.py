@@ -79,11 +79,8 @@ class AzureBlobSender(FileSender):
         return cls(remote_ip_address, remote_port, account_key)
 
     def send(self, file_name: str, file_bytes: bytes) -> None:
-        try:
-            blob_client = self._container_client.get_blob_client(file_name)
-            blob_client.uplade_blob(file_bytes, blob_type="BlockBlob")
-        except Exception as e:
-            logger.exception(e)
+        blob_client = self._container_client.get_blob_client(file_name)
+        blob_client.uplade_blob(file_bytes, blob_type="BlockBlob")
 
 
 SWITCHER = {"blob": AzureBlobSender, "https": HttpsFileSender}
