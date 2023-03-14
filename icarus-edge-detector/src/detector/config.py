@@ -14,14 +14,15 @@ DETECTOR_IMAGE_HEIGHT = int(os.environ.get("DETECTOR_IMAGE_HEIGHT", 640))
 DETECTOR_IMAGE_WIDTH = int(os.environ.get("DETECTOR_IMAGE_WIDTH", 640))
 
 META_DATA_SENDER = os.environ.get("META_DATA_SENDER")
+FILE_SENDER = os.environ.get("FILE_SENDER")
 
-DETECTOR_CONFIDENCE=float(os.environ.get("DETECTOR_CONFIDENCE", "0.7"))
+DETECTOR_CONFIDENCE = float(os.environ.get("DETECTOR_CONFIDENCE", "0.7"))
 
 
 def get_video_capture_config():
     input_caps = (
         "nvarguscamerasrc "
-        f"! video/x-raw(memory:NVMM), height=(int){VIDEO_HEIGHT}, width=(int){VIDEO_WIDTH}, framerate=(fraction){VIDEO_FRAMERATE}/1 "
+        f"! video/x-raw(memory:NVMM), height=(int){VIDEO_HEIGHT}, width=(int){VIDEO_WIDTH}, framerate=(fraction){VIDEO_FRAMERATE}/1 "  # noqa
         "! nvvidconv "
         "! video/x-raw,format=BGRx "
         "! videoconvert "
@@ -65,7 +66,8 @@ def get_meta_data_sender_config():
 
 def get_file_sender_config():
     return dict(
-        remote_ip_address=os.environ.get("REMOTE_IP_ADDRESS"),
+        remote_ip_address=os.environ.get("REMOTE_FILE_SENDER_IP_ADDRESS"),
         remote_port=os.environ.get("REMOTE_FILE_SENDER_PORT"),
         auth=None,
+        account_key=os.environ.get("REMOTE_FILE_SENDER_ACCOUNT_KEY"),
     )

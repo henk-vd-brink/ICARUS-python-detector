@@ -28,10 +28,13 @@ def inject_dependencies_into_handlers(handler_module, dependencies):
 
 def bootstrap(
     video_capture=vc.VideoCapture.from_dict(config.get_video_capture_config()),
-    file_sender=fs.HttpsFileSender.from_dict(config.get_file_sender_config()),
 ):
     # Select meta data sender
     selected_meta_data_sender = mds.SWITCHER.get(config.META_DATA_SENDER)
+    selected_file_sender = fs.SWITCHER.get(config.FILE_SENDER)
+
+    logging.info(f"Selected meta data sender: {selected_meta_data_sender.__name__}, ")
+    logging.info(f"Selected file sender: {selected_file_sender.__name__}, ")
 
     meta_data_sender_config = config.get_meta_data_sender_config()
 
@@ -46,7 +49,7 @@ def bootstrap(
     dependencies = {
         "detector": detector,
         "meta_data_sender": meta_data_sender,
-        "file_sender": file_sender,
+        "file_sender": selected_file_sender,
     }
 
     inject_dependencies_into_handlers(handlers, dependencies)
