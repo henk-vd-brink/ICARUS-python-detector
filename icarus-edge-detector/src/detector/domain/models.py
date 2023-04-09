@@ -14,7 +14,7 @@ class Frame:
 
     @classmethod
     def from_image(cls, image):
-        timestamp = datetime.now()
+        timestamp = datetime.utcnow()
         timestamp_as_string = timestamp.strftime("%Y-%m-%d-%H-%M-%S-%f")
         image_uuid = f"{config.DEVICE_ID}-{timestamp_as_string}"
         return cls(image=image, uuid=image_uuid, timestamp=timestamp)
