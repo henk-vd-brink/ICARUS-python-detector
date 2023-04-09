@@ -34,8 +34,8 @@ def send_image_to_remote(frame, file_sender):
 def send_meta_data_to_remote(frame, meta_data_sender):
     message = models.Message.from_frame(frame)
 
-    message_as_json = json.dumps(message.asdict())
+    message_as_dict = message.asdict()
 
-    meta_data_sender.send_meta_data(message_as_json)
+    meta_data_sender.send_meta_data(message_as_dict)
 
-    logger.info(message_as_json)
+    logger.info(message_as_dict)

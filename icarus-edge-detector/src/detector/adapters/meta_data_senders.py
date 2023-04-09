@@ -1,5 +1,7 @@
+import os
 import pika
 import ssl
+import json
 from azure.iot.device import IoTHubModuleClient
 from typing import Dict, Any
 from abc import ABC, abstractmethod
@@ -22,8 +24,12 @@ class IoTEdgeClient(AbstractMqClient):
     def from_dict(cls, _):
         return cls()
 
-    def send_meta_data(self, message):
-        self._iot_edge_client.send_message_to_output(message, "output_1")
+    def send_meta_data(self, message: dict):
+        message["device_id"] = os.environ.get("IOTEDGE_DEVICEID")
+
+        message_as_json = json.dumps(message)
+
+        self._iot_edge_client.send_message_to_output(message_as_json, "output_1")
 
 
 class RabbitMqClient(AbstractMqClient):
