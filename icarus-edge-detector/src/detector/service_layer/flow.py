@@ -20,7 +20,7 @@ class Flow:
         
         frame.detections = list(
             filter(
-                lambda x: x["label"] in ["person", "car", "bus"], 
+                lambda x: x["label"] in ["person", "car", "bus", "bird", "cat", "dog"], 
                 frame.detections
             )
         )
