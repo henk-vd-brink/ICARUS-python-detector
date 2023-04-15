@@ -3,4 +3,4 @@ pytest
 pika
 requests
 azure-iot-device~=2.5.0
-azure-storage-blob
+azure-storage-blob==12.15.0
